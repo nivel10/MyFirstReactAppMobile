@@ -12,13 +12,56 @@ import TopRestaurantsStack from "./TopRestaurantsStack";
 import FavoritesStack from "./FavoritesStack";
 import SearchStack from "./SearchStack";
 import AccountStack from "./AccountStack";
+import { Icon } from "react-native-elements";
 
 const Tab = createBottomTabNavigator();
+const colorActive = "#442484";
+const colorInactive = "#A17DC3";
 
 export default function Navigation() {
+
+  const screenOptions = (route, color) =>{
+    let iconName;
+
+    switch(route.name){
+      case "restaurants":
+        iconName = "compass-outline";
+        break;
+      case "favorites":
+        iconName = "heart-outline";
+        break;
+      case "top-restaurants":
+        iconName = "star-outline";
+        break;
+       case "search":
+        iconName = "magnify";
+        break;
+      case "account":
+        iconName = "home-outline";
+        break;
+    };
+
+    return (
+      <Icon type="material-community"
+        name={iconName}
+        size={22}
+        color={color}
+      />
+    );
+  };
+
   return (
     <NavigationContainer>
-      <Tab.Navigator>
+      <Tab.Navigator
+        initialRouteName="restaurants"
+        tabBarOptions={{
+          inactiveTintColor: colorActive,
+          activeTintColor: colorInactive,
+        }}
+        screenOptions={({route}) => ({
+          tabBarIcon: ({color}) => screenOptions(route, color)
+          })}
+      >
 
           {/* <Tab.Screen name="restaurants"
             component={Restaurants} 
@@ -41,7 +84,7 @@ export default function Navigation() {
             component={TopRestaurants} 
         options={{title: "Top Restaurants"}}/>*/}
 
-          <Tab.Screen name="Top restaurants"
+          <Tab.Screen name="top-restaurants"
             component={TopRestaurantsStack} 
             options={{title: "Top Restaurants"}}/>
 
@@ -49,7 +92,7 @@ export default function Navigation() {
             component={Search}
             options={{title: "Search"}}/>*/}
 
-          <Tab.Screen name="Search"
+          <Tab.Screen name="search"
             component={SearchStack}
             options={{title: "Search"}}/>
 
@@ -57,7 +100,7 @@ export default function Navigation() {
             component={Account}
           options={{title: "Account"}}/>*/}
 
-          <Tab.Screen name="Account"
+          <Tab.Screen name="account"
             component={AccountStack}
             options={{title: "Account"}}/>
 
