@@ -15,8 +15,8 @@ import AccountStack from "./AccountStack";
 import { Icon } from "react-native-elements";
 
 const Tab = createBottomTabNavigator();
-const colorActive = "#442484";
-const colorInactive = "#A17DC3";
+const colorActive = "#A17DC3";
+const colorInactive = "#442484";
 
 export default function Navigation() {
 
