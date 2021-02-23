@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import {Button, Icon, Input} from 'react-native-elements';
+import { Button, Icon, Input } from 'react-native-elements';
 
 export default function RegisterForm() {
     return (
