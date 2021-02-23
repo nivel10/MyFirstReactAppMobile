@@ -5,6 +5,11 @@ import { Button, Icon, Input } from 'react-native-elements';
 export default function RegisterForm() {
 
     const [showPassword, setShowPassword] = useState(false);
+    const [formData, setFormData] = useState(defaultFormValues());
+
+    const onChange = (e, type) => {
+        setFormData({ ...formData, [type]: e.nativeEvent.text })
+    };
 
     return (
         <View
@@ -14,12 +19,15 @@ export default function RegisterForm() {
             <Input
                 containerStyle={styles.input}
                 placeholder="Enter your email"
+                onChange={(e) => onChange(e, "email")}
+                keyboardType="email-address"
             />
             <Input
                 containerStyle={styles.input}
                 placeholder="Enter your password"
                 password={!showPassword}
                 secureTextEntry={!showPassword}
+                onChange={(e) => onChange(e, "password")}
                 rightIcon={
                 <Icon
                     type="material-community"
@@ -34,6 +42,7 @@ export default function RegisterForm() {
                 placeholder="Confirm your password"
                 password={!showPassword}
                 secureTextEntry={!showPassword}
+                onChange={(e) => onChange(e, "passwordConfirm")}
                 rightIcon={
                     <Icon
                         type="material-community"
@@ -48,11 +57,15 @@ export default function RegisterForm() {
                 title="Register user"
                 containerStyle={styles.btnContainer}
                 buttonStyle={styles.btnStyle}
-                onPress={() => console.log('click')}
+                onPress={() => console.log(formData)}
             />
 
         </View>
     )
+}
+
+const defaultFormValues = () => {
+    return {email: "", password: "", passwordConfirm: ""};
 }
 
 const styles = StyleSheet.create({
