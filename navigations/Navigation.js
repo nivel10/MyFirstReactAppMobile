@@ -15,8 +15,8 @@ import AccountStack from "./AccountStack";
 import { Icon } from "react-native-elements";
 
 const Tab = createBottomTabNavigator();
-const colorActive = "#A17DC3";
-const colorInactive = "#442484";
+const colorActive = "#f2936c";
+const colorInactive = "#cccdcf";
 
 export default function Navigation() {
 
@@ -55,8 +55,8 @@ export default function Navigation() {
       <Tab.Navigator
         initialRouteName="restaurants"
         tabBarOptions={{
-          inactiveTintColor: colorActive,
-          activeTintColor: colorInactive,
+          inactiveTintColor: colorInactive,
+          activeTintColor: colorActive,
         }}
         screenOptions={({route}) => ({
           tabBarIcon: ({color}) => screenOptions(route, color)

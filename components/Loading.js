@@ -16,7 +16,7 @@ export default function Loading({ isVisible, text }) {
             <View style={styles.view}>
                 <ActivityIndicator
                     size="large"
-                    color="#442484"
+                    color="#f2936c"
                 />
                 {text && <Text style={styles.text}>{text}</Text>}
             </View>
@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
         height: 100,
         width: 200,
         backgroundColor: "#ffff",
-        borderColor: "#442484",
+        borderColor: "#f2936c",
         borderWidth: 2,
         borderRadius: 10,
     },
@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
     },
 
     text: {
-        color: "#442484",
+        color: "#f2936c",
         marginTop: 10,
     },
 });
