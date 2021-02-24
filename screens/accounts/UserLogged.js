@@ -1,14 +1,23 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 import { Button } from 'react-native-elements'
 
 import { useNavigation } from '@react-navigation/native';
 
 import { signOut } from '../../utils/actions';
+import Loading from '../../components/Loading';
 
 export default function UserLogged() {
 
     const navigation = useNavigation();
+    const [showLoading, setShowLoading] = useState(false);
+
+    const signOutLocal = () => {
+        setShowLoading(true);
+        signOut();
+        navigation.navigate("restaurants");
+        setShowLoading(false);
+    };
 
     return (
         <View>
@@ -18,10 +27,13 @@ export default function UserLogged() {
                 buttonStyle={styles.btnSignOff}
                 title="Sign off"
                 onPress={() => {
-                    signOut();
-                    navigation.navigate("restaurants");
+                    /*signOut();
+                    navigation.navigate("restaurants");*/
+                    signOutLocal();
                 }}
             />
+
+            <Loading isVisible={showLoading} text="Processing please wait..."/>
         </View>
     )
 }

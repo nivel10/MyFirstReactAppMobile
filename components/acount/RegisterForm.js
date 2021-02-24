@@ -7,6 +7,7 @@ import { useNavigation } from '@react-navigation/native';
 
 import { createUserAsync } from '../../utils/actions';
 import { validateEmail } from '../../utils/helpers';
+import Loading from '../Loading';
 
 export default function RegisterForm() {
 
@@ -19,6 +20,8 @@ export default function RegisterForm() {
     const [errorPassword, setErrorPassword] = useState("");
     const [errorPasswordConfirm, setErrorPasswordConfirm] = useState("");
 
+    const [showLoading, setShowLoading] = useState(false);
+
     const onChange = (e, type) => {
         setFormData({ ...formData, [type]: e.nativeEvent.text })
     };
@@ -27,7 +30,11 @@ export default function RegisterForm() {
         if(!validateData()){
             return;
         }
+
+        setShowLoading(true);
         const resul = await createUserAsync(formData.email, formData.password);
+        setShowLoading(false);
+
         if(!resul.statusResponse){
             //console.log(`Error: ${resul.error}`);
             setErrorEmail(resul.error);
@@ -121,6 +128,8 @@ export default function RegisterForm() {
                 buttonStyle={styles.btnStyle}
                 onPress={() => registerUser()}
             />
+
+            <Loading isVisible={showLoading} text="Processing please wait..."/>
 
         </View>
     )
