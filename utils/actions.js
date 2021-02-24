@@ -39,3 +39,26 @@ export const createUserAsync = async (email, password) =>{
 export const signOut = () => {
     firebase.auth().signOut();
 }
+
+export const loginUserAsync = async (email, password) => {
+    const result = {statusResponse: true, error: null};
+    try{
+        await firebase.auth().signInWithEmailAndPassword(email, password)
+        .catch(function (ex) {
+            console.log(`${ex.code} - ${ex.message}`);
+            switch(ex.code){
+                case 'auth/user-not-found':
+                    break;
+                case 'auth/wrong-password':
+                    break;
+            }
+           result.statusResponse = false;
+           result.error = ex.message;
+        });
+    }
+    catch(ex){
+        result.statusResponse = false;
+        result.error = ex;
+    }
+    return result;
+}
