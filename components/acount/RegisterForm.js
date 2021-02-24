@@ -2,11 +2,15 @@ import { size } from 'lodash';
 import React, {useState} from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Button, Icon, Input } from 'react-native-elements';
-import { createUserAsync } from '../../utils/actions';
 
+import { useNavigation } from '@react-navigation/native';
+
+import { createUserAsync } from '../../utils/actions';
 import { validateEmail } from '../../utils/helpers';
 
 export default function RegisterForm() {
+
+    const navigation = useNavigation();
 
     const [showPassword, setShowPassword] = useState(false);
     const [formData, setFormData] = useState(defaultFormValues());
@@ -24,7 +28,13 @@ export default function RegisterForm() {
             return;
         }
         const resul = await createUserAsync(formData.email, formData.password);
+        if(!resul.statusResponse){
+            /*console.log(`Error: ${resul.error}`);*/
+            setErrorEmail(resul.error);
+            return;
+        }
         console.log("Ok");
+        navigation.navigate("account");
     }
 
     const validateData = () => {

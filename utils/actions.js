@@ -20,11 +20,20 @@ export const getCurrentUser = () => {
 export const createUserAsync = async (email, password) =>{
     const result = {statusResponse: true, error: null, };
     try {
-        await firebase.auth().createUserWithEmailAndPassword(email, password);
-        result.statusResponse = true;
+        await firebase.auth().createUserWithEmailAndPassword(email, password)
+        .catch(function (ex){
+            console.log(`${ex.code} - ${ex.message}`);
+            result.statusResponse = false;
+            result.error = ex.message;
+        });
     } catch (ex) {
         console.log(ex);
+        result.statusResponse = false;
         result.error = ex;
     }
     return result;
+}
+
+export const logoutUser = () => {
+    firebase.auth().signOut();
 }
