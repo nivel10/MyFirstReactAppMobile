@@ -2,6 +2,7 @@ import { size } from 'lodash';
 import React, {useState} from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Button, Icon, Input } from 'react-native-elements';
+import { createUserAsync } from '../../utils/actions';
 
 import { validateEmail } from '../../utils/helpers';
 
@@ -18,11 +19,11 @@ export default function RegisterForm() {
         setFormData({ ...formData, [type]: e.nativeEvent.text })
     };
 
-    const registerUser = () => {
+    const registerUser = async () => {
         if(!validateData()){
             return;
         }
-
+        const resul = await createUserAsync(formData.email, formData.password);
         console.log("Ok");
     }
 

@@ -16,3 +16,15 @@ export const isUserLogged = () =>{
 export const getCurrentUser = () => {
     return firebase.auth().currentUser;
 }
+
+export const createUserAsync = async (email, password) =>{
+    const result = {statusResponse: true, error: null, };
+    try {
+        await firebase.auth().createUserWithEmailAndPassword(email, password);
+        result.statusResponse = true;
+    } catch (ex) {
+        console.log(ex);
+        result.error = ex;
+    }
+    return result;
+}
