@@ -1,15 +1,60 @@
+import { size } from 'lodash';
 import React, {useState} from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Button, Icon, Input } from 'react-native-elements';
+
+import { validateEmail } from '../../utils/helpers';
 
 export default function RegisterForm() {
 
     const [showPassword, setShowPassword] = useState(false);
     const [formData, setFormData] = useState(defaultFormValues());
 
+    const [errorEmail, setErrorEmail] = useState("");
+    const [errorPassword, setErrorPassword] = useState("");
+    const [errorPasswordConfirm, setErrorPasswordConfirm] = useState("");
+
     const onChange = (e, type) => {
         setFormData({ ...formData, [type]: e.nativeEvent.text })
     };
+
+    const registerUser = () => {
+        if(!validateData()){
+            return;
+        }
+
+        console.log("Ok");
+    }
+
+    const validateData = () => {
+        setErrorEmail("");
+        setErrorPassword("");
+        setErrorPasswordConfirm("");
+        let isValid = true;
+
+        if(!validateEmail(formData.email)){
+            setErrorEmail("Your must enter a valid email.");
+            isValid = false;
+        }
+
+        if(size(formData.password) < 6){
+            setErrorPassword("Your must enter a password of at least 6 characters.");
+            isValid = false;
+        }
+
+        if(size(formData.passwordConfirm) < 6){
+            setErrorPasswordConfirm("Your must enter a password of at least 6 characters.");
+            isValid = false;
+        }
+
+        if(formData.password !== formData.passwordConfirm){
+            setErrorPassword("Password and password confirm are not the same.");
+            setErrorPasswordConfirm("Password and password confirm are not the same.");
+            isValid = false;
+        }
+
+        return isValid;
+    }
 
     return (
         <View
@@ -21,9 +66,13 @@ export default function RegisterForm() {
                 placeholder="Enter your email"
                 onChange={(e) => onChange(e, "email")}
                 keyboardType="email-address"
+                defaultValue={formData.email}
+                errorMessage={errorEmail}
             />
             <Input
                 containerStyle={styles.input}
+                defaultValue={formData.password}
+                errorMessage={errorPassword}
                 placeholder="Enter your password"
                 password={!showPassword}
                 secureTextEntry={!showPassword}
@@ -39,6 +88,8 @@ export default function RegisterForm() {
             />
             <Input
                 containerStyle={styles.input}
+                defaultValue={formData.passwordConfirm}
+                errorMessage={errorPasswordConfirm}
                 placeholder="Confirm your password"
                 password={!showPassword}
                 secureTextEntry={!showPassword}
@@ -57,7 +108,7 @@ export default function RegisterForm() {
                 title="Register user"
                 containerStyle={styles.btnContainer}
                 buttonStyle={styles.btnStyle}
-                onPress={() => console.log(formData)}
+                onPress={() => registerUser()}
             />
 
         </View>
