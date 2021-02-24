@@ -1,5 +1,5 @@
-import { size } from 'lodash';
 import React, {useState} from 'react';
+import { size } from 'lodash';
 import { StyleSheet, Text, View } from 'react-native';
 import { Button, Icon, Input } from 'react-native-elements';
 
@@ -29,11 +29,11 @@ export default function RegisterForm() {
         }
         const resul = await createUserAsync(formData.email, formData.password);
         if(!resul.statusResponse){
-            /*console.log(`Error: ${resul.error}`);*/
+            //console.log(`Error: ${resul.error}`);
             setErrorEmail(resul.error);
             return;
         }
-        console.log("Ok");
+        //console.log("Ok");
         navigation.navigate("account");
     }
 
@@ -141,7 +141,7 @@ const styles = StyleSheet.create({
 
     btnContainer: {
         marginTop: 20,
-        width: "60%",
+        width: "40%",
         alignSelf: "center",
     },
 

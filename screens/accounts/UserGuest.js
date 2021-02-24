@@ -18,7 +18,9 @@ export default function UserGuest() {
             />
             <Text
                 style={styles.title}
-            >Check your profile in restaurant </Text>
+            >
+                Check your profile in restaurant 
+            </Text>
             <Text
                 style={styles.description}
             >
@@ -26,8 +28,9 @@ export default function UserGuest() {
             </Text>
 
             <Button
+                containerStyle={styles.btnProfileContainer}
                 title="Your profile"
-                buttonStyle={styles.button}
+                buttonStyle={styles.btnProfile}
                 onPress={() => navigation.navigate("login")}
             />
 
@@ -60,7 +63,12 @@ const styles = StyleSheet.create({
         color: "#917464",
     },
 
-    button: {
+    btnProfile: {
         backgroundColor: "#f2936c",
+    },
+
+    btnProfileContainer: {
+        alignSelf: "center",
+        width: "40%",
     },
 });

@@ -5,12 +5,14 @@ import 'firebase/firestore';
 const db = firebase.firestore(firebaseApp);
 
 export const isUserLogged = () =>{
-    let isLoggerd = false;
+    let isLogged = false;
 
     firebase.auth().onAuthStateChanged((user) =>{
-        user !== null && (isLoggerd = true);
+        user !== null && (isLogged = true);
+        //user !== null ? isLogged = true : isLogged = false;
+        //console.log(`onAuthStateChanged: ${user}`);
     })
-    return isLoggerd;
+    return isLogged;
 };
 
 export const getCurrentUser = () => {
@@ -22,18 +24,18 @@ export const createUserAsync = async (email, password) =>{
     try {
         await firebase.auth().createUserWithEmailAndPassword(email, password)
         .catch(function (ex){
-            console.log(`${ex.code} - ${ex.message}`);
+            //console.log(`${ex.code} - ${ex.message}`);
             result.statusResponse = false;
             result.error = ex.message;
         });
     } catch (ex) {
-        console.log(ex);
+        //console.log(ex);
         result.statusResponse = false;
         result.error = ex;
     }
     return result;
 }
 
-export const logoutUser = () => {
+export const signOut = () => {
     firebase.auth().signOut();
 }
