@@ -65,6 +65,7 @@ const styles = StyleSheet.create({
 
     btnProfile: {
         backgroundColor: "#f2936c",
+        borderRadius: 5,
     },
 
     btnProfileContainer: {

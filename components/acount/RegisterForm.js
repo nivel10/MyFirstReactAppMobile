@@ -156,6 +156,7 @@ const styles = StyleSheet.create({
 
     btnStyle: {
         backgroundColor: "#f2936c",
+        borderRadius: 5,
     },
 
     icon: {

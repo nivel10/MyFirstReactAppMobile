@@ -125,6 +125,7 @@ const styles = StyleSheet.create({
 
     btnLogin: {
         backgroundColor: "#f2936c",
+        borderRadius: 5,
     },
 
     btnLoginContainer: {
