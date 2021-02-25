@@ -32,14 +32,15 @@ export default function InfoUser({ user, setShowLoading, setLoadingText }) {
     const resultUpdateProfile = await updateProfileAsync({
       photoURL: resultUploadImage.url,
     });
-    setShowLoading(false);
 
     if (!resultUpdateProfile.statusResponse) {
-        Alert.alert("Error", resultUpdateProfile.error);
-        return;
+      setShowLoading(false);
+      Alert.alert("Error", resultUpdateProfile.error);
+      return;
     }
 
     setImageUrl(resultUploadImage.url);
+    setShowLoading(false);
   };
 
   return (
