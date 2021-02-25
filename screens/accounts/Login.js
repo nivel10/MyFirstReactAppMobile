@@ -1,13 +1,14 @@
 import React from 'react'
 import { StyleSheet, Text, View, ScrollView, Image} from 'react-native'
 import { Divider } from 'react-native-elements'
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
 import { useNavigation } from '@react-navigation/native'
 import LoginForm from '../../components/acount/LoginForm'
 
 export default function Login() {
     return (
-        <ScrollView>
+        <KeyboardAwareScrollView>
             <Image
                 source={require("../../assets/fhb.png")}
                 resizeMode="contain"
@@ -24,7 +25,7 @@ export default function Login() {
                 style={styles.divider}
             />
 
-        </ScrollView>
+        </KeyboardAwareScrollView>
     )
 }
 

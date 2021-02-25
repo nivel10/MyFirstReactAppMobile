@@ -5,7 +5,7 @@ import { Button, Icon, Input } from 'react-native-elements'
 
 import { useNavigation } from '@react-navigation/native';
 
-import { loginUserAsync } from '../../utils/actions';
+import { loginWithEmailAndPasswordAsync } from '../../utils/actions';
 import { validateEmail } from '../../utils/helpers';
 
 import Loading from '../Loading';
@@ -53,7 +53,7 @@ export default function LoginForm() {
             return;
         }
         setShowLoading(true);
-        const result = await loginUserAsync(formData.email, formData.password);
+        const result = await loginWithEmailAndPasswordAsync(formData.email, formData.password);
         setShowLoading(false);
 
         if(!result.statusResponse)
@@ -63,7 +63,7 @@ export default function LoginForm() {
         }
 
         setShowLoading(true);
-        navigation.navigate("restaurants");
+        navigation.navigate("account");
         setShowLoading(false);
     }
 

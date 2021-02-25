@@ -40,12 +40,12 @@ export const signOut = () => {
     firebase.auth().signOut();
 }
 
-export const loginUserAsync = async (email, password) => {
+export const loginWithEmailAndPasswordAsync = async (email, password) => {
     const result = {statusResponse: true, error: null};
     try{
         await firebase.auth().signInWithEmailAndPassword(email, password)
         .catch(function (ex) {
-            console.log(`${ex.code} - ${ex.message}`);
+            ///console.log(`${ex.code} - ${ex.message}`);
             switch(ex.code){
                 case 'auth/user-not-found':
                     break;
