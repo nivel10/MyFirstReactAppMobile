@@ -71,7 +71,9 @@ export default function LoginForm() {
         <View
             style={styles.container}
         >
-            <Input 
+            <Input
+                containerStyle={styles.input}
+                defaultValue={formData.email}
                 errorMessage={errorEmail}
                 placeholder="Enter your email..."
                 keyboardType="email-address"
@@ -79,11 +81,12 @@ export default function LoginForm() {
             />
 
             <Input
+                containerStyle={styles.input}
+                defaultValue={formData.password}
                 errorMessage={errorPassword}
                 placeholder="Enter your password..."
                 password={showPassword}
                 secureTextEntry={showPassword}
-                style={styles.input}
                 onChange={(e) => onChangeLocal(e, "password")}
                 rightIcon={
                     <Icon

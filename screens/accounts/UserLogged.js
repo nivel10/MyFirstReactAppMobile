@@ -19,6 +19,7 @@ export default function UserLogged() {
     const toastRef = useRef();
 
     const signOutLocal = () => {
+        setLoadingText("Processing please wait...");
         setShowLoading(true);
         signOut();
         navigation.navigate("restaurants");
@@ -31,10 +32,17 @@ export default function UserLogged() {
 
     return (
         <View>
-            {
-                user && <InfoUser user={user}/>
+            {        
+                user && (
+                    <View>
+                        <InfoUser 
+                            user={user} 
+                            setShowLoading={setShowLoading} 
+                            setLoadingText={setLoadingText} />
+                        <Text>Account options</Text>
+                    </View>
+                )
             }
-            <Text>Account options</Text>
             <Button
                 buttonStyle={styles.btnSignOff}
                 containerStyle={styles.btnSignOffContainer}
@@ -47,7 +55,7 @@ export default function UserLogged() {
                 }}
             />
 
-            <Loading isVisible={showLoading} text="Processing please wait..."/>
+            <Loading isVisible={showLoading} text={loadingText}/>
             <Toast  ref={toastRef} position="center" opacity={0.9}/>
         </View>
     )
