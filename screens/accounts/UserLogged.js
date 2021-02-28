@@ -16,6 +16,7 @@ export default function UserLogged() {
     const [showLoading, setShowLoading] = useState(false);
     const [loadingText, setLoadingText] = useState("");
     const [user, setUser] = useState(null);
+    const [reloaduser, setReloadUser] = useState(false);
 
     const toastRef = useRef();
 
@@ -29,7 +30,8 @@ export default function UserLogged() {
 
     useEffect(() => {
         setUser(getCurrentUser());
-    }, []);
+        setReloadUser(false);
+    }, [reloaduser]);
 
     return (
         <View>
@@ -43,6 +45,7 @@ export default function UserLogged() {
                         <AccountOptions 
                             user={user} 
                             toastRef={toastRef}
+                            setReloadUser={setReloadUser}
                             />
                     </View>
                 )
