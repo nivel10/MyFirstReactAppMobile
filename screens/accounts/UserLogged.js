@@ -8,6 +8,7 @@ import { useNavigation } from '@react-navigation/native';
 import { getCurrentUser, signOut } from '../../utils/actions';
 import Loading from '../../components/Loading';
 import InfoUser from '../../components/acount/InfoUser';
+import AccountOptions from '../../components/acount/AccountOptions';
 
 export default function UserLogged() {
 
@@ -39,7 +40,10 @@ export default function UserLogged() {
                             user={user} 
                             setShowLoading={setShowLoading} 
                             setLoadingText={setLoadingText} />
-                        <Text>Account options</Text>
+                        <AccountOptions 
+                            user={user} 
+                            toastRef={toastRef}
+                            />
                     </View>
                 )
             }
