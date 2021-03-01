@@ -3,7 +3,7 @@ import { StyleSheet, Text, View } from 'react-native'
 import { Button, Icon, Input } from 'react-native-elements'
 import { isEmpty, size } from 'lodash';
 
-import { reAuthenticateUserAsync,  } from '../../utils/actions';
+import { reAuthenticateUserAsync, updatePasswordAsync,  } from '../../utils/actions';
 
 export default function ChangePasswordForm({setShowModal, toastRef, }) {
 
@@ -26,7 +26,7 @@ export default function ChangePasswordForm({setShowModal, toastRef, }) {
             return;
         }
         
-        /*setShowLoading(true);
+        setShowLoading(true);
         const resultReAuthentication = await reAuthenticateUserAsync(currentPassword);
 
         if(!resultReAuthentication.statusResponse){
@@ -35,18 +35,16 @@ export default function ChangePasswordForm({setShowModal, toastRef, }) {
             return;
         }
 
-        const resultUpdateEmail = await updateEmailAsync(newPassword);
-        if(!resultUpdateEmail.statusResponse){
+        const resultUpdatePassword = await updatePasswordAsync(newPasswordConfirm);
+        if(!resultUpdatePassword.statusResponse){
             setShowLoading(false);
-            setErrorEmail(resultUpdateEmail.error.message);
+            setErrorEmail(resultUpdatePassword.error.message);
             return;
         }
         setShowLoading(false);
-
-        setReloadUser(true);
         setShowModal(false);
 
-        toastRef.current.show("The data has been updated successfully", 2000);*/
+        toastRef.current.show("The data has been updated successfully", 2000);
     }
 
     const validateForm = () => {
