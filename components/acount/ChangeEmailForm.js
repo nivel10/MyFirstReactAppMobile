@@ -1,9 +1,9 @@
-import React, { useState, useEffect, } from 'react'
+import React, { useState, } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 import { Button, Icon, Input } from 'react-native-elements'
 import { isEmpty } from 'lodash';
 
-import { reAuthenticateUserAsync, updateEmailAsync, updateProfileAsync } from '../../utils/actions';
+import { reAuthenticateUserAsync, updateEmailAsync, } from '../../utils/actions';
 import { validateEmail } from '../../utils/helpers';
 
 export default function ChangeEmailForm({ email, setShowModal, toastRef, setReloadUser, }) {
@@ -14,10 +14,6 @@ export default function ChangeEmailForm({ email, setShowModal, toastRef, setRelo
     const [errorPassword, setErrorPassword] = useState(null);
     const [showPassword, setShowPassword] = useState(false);
     const [showLoading, setShowLoading] = useState(false);
-
-    /*useEffect(() => {
-        setNewEmail(email);
-    }, [])*/
 
     const onSubmit = async () => {
         if(!validateForm()){
@@ -75,7 +71,7 @@ export default function ChangeEmailForm({ email, setShowModal, toastRef, setRelo
             style={styles.view}
         >
             <Text>
-                Enter new email and current password:
+                Change email:
             </Text>
             <Input
                 containerStyle={styles.input}

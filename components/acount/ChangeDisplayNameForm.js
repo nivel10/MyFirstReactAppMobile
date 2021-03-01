@@ -11,10 +11,6 @@ export default function ChangeDisplayNameForm({ displayName, setShowModal, toast
     const [errorDisplayName, setErrorDisplayName] = useState(null);
     const [showLoading, setShowLoading] = useState(false);
 
-    /*useEffect(() => {
-        setNewDisplayName(displayName);
-    }, [])*/
-
     const onSubmit = async () => {
         if(!validateForm()){
             return;
@@ -56,7 +52,7 @@ export default function ChangeDisplayNameForm({ displayName, setShowModal, toast
             style={styles.view}
         >
             <Text>
-                Enter new first and last name:
+                Change first and last name:
             </Text>
             <Input
                 containerStyle={styles.input}
