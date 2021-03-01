@@ -7,13 +7,13 @@ import { updateProfileAsync } from '../../utils/actions';
 
 export default function ChangeDisplayNameForm({ displayName, setShowModal, toastRef, setReloadUser, }) {
 
-    const [newDisplayName, setNewDisplayName] = useState(null);
+    const [newDisplayName, setNewDisplayName] = useState(displayName);
     const [errorDisplayName, setErrorDisplayName] = useState(null);
     const [showLoading, setShowLoading] = useState(false);
 
-    useEffect(() => {
+    /*useEffect(() => {
         setNewDisplayName(displayName);
-    }, [])
+    }, [])*/
 
     const onSubmit = async () => {
         if(!validateForm()){
@@ -25,7 +25,7 @@ export default function ChangeDisplayNameForm({ displayName, setShowModal, toast
         setShowLoading(false);
 
         if(!result.statusResponse){
-            setErrorDisplayName(result.error);
+            setErrorDisplayName(result.error.message);
             return;
         }
 

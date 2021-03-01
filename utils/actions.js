@@ -91,3 +91,27 @@ export const updateProfileAsync = async (data) => {
     }
     return result;
 }
+
+export const reAuthenticateUserAsync = async (password) => {
+    const result = {statusResponse: true, error: null,};
+    try {
+        const user = getCurrentUser();
+        const credentials = firebase.auth.EmailAuthProvider.credential(user.email, password);
+        await user.reauthenticateWithCredential(credentials);
+    } catch (ex) {
+        result.statusResponse = false;
+        result.error = ex;
+    }
+    return result;
+}
+
+export const updateEmailAsync = async (email) => {
+    const result = {statusResponse: true, error: null,};
+    try {
+        await firebase.auth().currentUser.updateEmail(email);
+    } catch (ex) {
+        result.statusResponse = false;
+        result.error = ex;
+    }
+    return result;
+}
