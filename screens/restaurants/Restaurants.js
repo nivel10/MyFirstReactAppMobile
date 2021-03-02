@@ -5,7 +5,7 @@ import firebase from 'firebase/app';
 
 import Loading from '../../components/Loading';
 
-export default function Restaurants() {
+export default function Restaurants({ navigation }) {
 
     const [user, setUser] = useState(null);
 
@@ -35,6 +35,7 @@ export default function Restaurants() {
                         color="#f2936c"
                         reverse={true}
                         containerStyle={styles.btnIconContainer}
+                        onPress={() => navigation.navigate("addRestaurant")}
                     />
                 )
             }
