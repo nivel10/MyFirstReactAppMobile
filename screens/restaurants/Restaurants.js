@@ -15,12 +15,12 @@ export default function Restaurants() {
         });
     }, []);
 
-    /*if(user === null){
+    if(user === null){
         return <Loading
             isVisible={true} 
             text="Loading, please wait..."
         />
-    }*/
+    }
 
     return (
         <View
