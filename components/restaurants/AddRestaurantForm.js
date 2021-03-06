@@ -4,6 +4,8 @@ import { Button, Input, Icon, Avatar, } from 'react-native-elements';
 import CountryPicker from 'react-native-country-picker-modal';
 import { map, size, } from 'lodash';
 
+import { loadImageFromGalleryAsync } from '../../utils/helpers';
+
 export default function AddRestaurantForm({ toastRef, setShowLoading, navigation, }) {
     const [formData, setFormData] = useState(defaultFormValues());
     const [errorName, setErrorName] = useState(null);
@@ -135,6 +137,17 @@ function FormAdd({ formData, setFormData, errorName, errorDescription, errorEmai
 }
 
 function UploadImage({ toastRef, imagesSelected, setImagesSelected, }){
+
+    const imageSelect = async () => {
+        const response = await loadImageFromGalleryAsync([4, 3]);
+
+        if(!response.status){
+            toastRef.current.show("You have not selected any image.", 1500);
+        }
+
+        setImagesSelected([...imagesSelected, response.image, ]);
+    }
+
     return (
         <ScrollView
             horizontal={true}
@@ -148,7 +161,7 @@ function UploadImage({ toastRef, imagesSelected, setImagesSelected, }){
                         name="camera"
                         color="#7a7a7a"
                         containerStyle={styles.iconContainer}
-                        onPress={() => console.log("Ok")}
+                        onPress={imageSelect}
                     />   
                 )
             }
