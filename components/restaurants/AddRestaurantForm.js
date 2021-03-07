@@ -1,10 +1,12 @@
 import React, {useState, } from 'react'
-import { StyleSheet, Text, View, ScrollView, Alert, } from 'react-native'
-import { Button, Input, Icon, Avatar, } from 'react-native-elements';
+import { Alert, Dimensions, ScrollView, StyleSheet, Text, View, } from 'react-native'
+import { Avatar, Button, Icon, Image, Input, } from 'react-native-elements';
 import CountryPicker from 'react-native-country-picker-modal';
 import { map, size, filter, } from 'lodash';
 
 import { loadImageFromGalleryAsync } from '../../utils/helpers';
+
+const widthScreen = Dimensions.get("window").width;
 
 export default function AddRestaurantForm({ toastRef, setShowLoading, navigation, }) {
     const [formData, setFormData] = useState(defaultFormValues());
@@ -21,9 +23,12 @@ export default function AddRestaurantForm({ toastRef, setShowLoading, navigation
     }
 
     return (
-        <View 
+        <ScrollView 
             style={styles.viewContainer}
         >
+            <ImageRestaurat 
+                imageRestaurant={imagesSelected[0]}
+            />
             <FormAdd
                 formData={formData}
                 setFormData={setFormData}
@@ -45,7 +50,7 @@ export default function AddRestaurantForm({ toastRef, setShowLoading, navigation
                 onPress={addRestaurant}
                 buttonStyle={styles.btnAddRestaurant}
             />
-        </View>
+        </ScrollView>
     )
 }
 
@@ -203,6 +208,29 @@ function UploadImage({ toastRef, imagesSelected, setImagesSelected, }){
     );
 }
 
+function ImageRestaurat({ imageRestaurant, }){
+    return (
+        <View
+            style={
+                { 
+                    height:200, 
+                    width: widthScreen, 
+                    bottom: 20, 
+                }
+            }
+        >
+            <Image
+                style={styles.viewPicture}
+                source={
+                    imageRestaurant ?
+                        {uri: imageRestaurant}
+                        : require("../../assets/NoImage.png")
+                }
+            />
+        </View>
+    );
+}
+
 const styles = StyleSheet.create({
     viewContainer: {
         top: 10,
@@ -251,5 +279,11 @@ const styles = StyleSheet.create({
         width: 70,
         height: 70,
         marginRight: 10,
+    },
+
+    viewPicture: {
+        alignItems: "center",
+        height: 200,
+        marginBottom: 20,
     },
 })
