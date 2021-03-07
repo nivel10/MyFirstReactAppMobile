@@ -1,8 +1,8 @@
 import React, {useState, } from 'react'
-import { StyleSheet, Text, View, ScrollView, } from 'react-native'
+import { StyleSheet, Text, View, ScrollView, Alert, } from 'react-native'
 import { Button, Input, Icon, Avatar, } from 'react-native-elements';
 import CountryPicker from 'react-native-country-picker-modal';
-import { map, size, } from 'lodash';
+import { map, size, filter, } from 'lodash';
 
 import { loadImageFromGalleryAsync } from '../../utils/helpers';
 
@@ -148,6 +148,28 @@ function UploadImage({ toastRef, imagesSelected, setImagesSelected, }){
         setImagesSelected([...imagesSelected, response.image, ]);
     }
 
+    const removeImage = (image) => {
+        Alert.alert(
+            "Warning", 
+            "Are you sure to delete this. This process is irreversible. Do you want to continue?",
+            [
+                {
+                    text: "No",
+                    style: "cancel",
+                },
+                {
+                    text: "Yes",
+                    onPress: () => setImagesSelected(
+                        filter(imagesSelected, (imageUrl) => imageUrl !== image)
+                    )
+                }
+            ],
+            {
+                cancelable: true,
+            }
+        );
+    }
+
     return (
         <ScrollView
             horizontal={true}
@@ -172,6 +194,7 @@ function UploadImage({ toastRef, imagesSelected, setImagesSelected, }){
                         key={index}
                         style={styles.miniatureStyle}
                         source={{uri: imageRestaurant, }}
+                        onPress={() => removeImage(imageRestaurant)}
                     />
                 ))
             }
