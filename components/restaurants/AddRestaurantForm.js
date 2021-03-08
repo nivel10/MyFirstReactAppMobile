@@ -5,6 +5,8 @@ import CountryPicker from 'react-native-country-picker-modal';
 import { map, size, filter, } from 'lodash';
 
 import { loadImageFromGalleryAsync } from '../../utils/helpers';
+import Modal from '../../components/Modal';
+import { color } from 'react-native-reanimated';
 
 const widthScreen = Dimensions.get("window").width;
 
@@ -16,6 +18,8 @@ export default function AddRestaurantForm({ toastRef, setShowLoading, navigation
     const [errorPhone, setErrorPhone] = useState(null);
     const [errorAddress, setErrorAddress] = useState(null);
     const [imagesSelected, setImagesSelected] = useState([]);
+    const [isVisibleMap, setIsVisibleMap] = useState(false);
+    const [locationRestaurant, setLocationRestaurant] = useState(null);
 
     const addRestaurant = () => {
         console.log(formData)
@@ -37,6 +41,7 @@ export default function AddRestaurantForm({ toastRef, setShowLoading, navigation
                 errorEmail={errorEmail}
                 errorPhone={errorPhone}
                 errorAddress={errorAddress}
+                setIsVisibleMap={setIsVisibleMap}
             />
 
             <UploadImage
@@ -49,6 +54,12 @@ export default function AddRestaurantForm({ toastRef, setShowLoading, navigation
                 title="Save"
                 onPress={addRestaurant}
                 buttonStyle={styles.btnAddRestaurant}
+            />
+            <MapRestaurant
+                isVisibleMap={isVisibleMap}
+                setIsVisibleMap={setIsVisibleMap}
+                setLocationRestaurant={setLocationRestaurant}
+                toastRef={toastRef}
             />
         </ScrollView>
     )
@@ -66,7 +77,7 @@ const defaultFormValues = () =>{
     };
 }
 
-function FormAdd({ formData, setFormData, errorName, errorDescription, errorEmail, errorPhone, errorAddress, }){
+function FormAdd({ formData, setFormData, errorName, errorDescription, errorEmail, errorPhone, errorAddress, setIsVisibleMap, }){
     const [country, setCountry] = useState("VE");
     const [callingCode, setCallingCode] = useState("58");
     const [phone, setPhone] = useState("");
@@ -84,6 +95,11 @@ function FormAdd({ formData, setFormData, errorName, errorDescription, errorEmai
                 defaultValue={formData.name}
                 onChange={(e) => onChange(e, "name")}
                 errorMessage={errorName}
+                rightIcon={{
+                    type: "material-community",
+                    name: "card-account-details-outline",
+                    color: "#c2c2c2",
+                }}
             />
 
             <Input
@@ -91,6 +107,12 @@ function FormAdd({ formData, setFormData, errorName, errorDescription, errorEmai
                 defaultValue={formData.address}
                 onChange={(e) => onChange(e, "address")}
                 errorMessage={errorAddress}
+                rightIcon={{
+                    type: "material-community",
+                    name: "google-maps",
+                    color: "#c2c2c2",
+                    onPress:() => setIsVisibleMap(true),
+                }}
             />
 
             <Input
@@ -99,6 +121,11 @@ function FormAdd({ formData, setFormData, errorName, errorDescription, errorEmai
                 defaultValue={formData.email}
                 onChange={(e) => onChange(e, "email")}
                 errorMessage={errorEmail}
+                rightIcon={{
+                    type: "material-community",
+                    name: "email",
+                    color: "#c2c2c2",
+                }}
             />
 
             <View
@@ -125,6 +152,11 @@ function FormAdd({ formData, setFormData, errorName, errorDescription, errorEmai
                     containerStyle={styles.inputPhone}
                     onChange={(e) => onChange(e, "phone")}
                     errorMessage={errorPhone}
+                    rightIcon={{
+                        type: "material-community",
+                        name: "cellphone",
+                        color: "#c2c2c2"
+                    }}
                 />
 
             </View>
@@ -136,6 +168,11 @@ function FormAdd({ formData, setFormData, errorName, errorDescription, errorEmai
                     onChange={(e) => onChange(e, "description")}
                     defaultValue={formData.description}
                     errorMessage={errorDescription}
+                    rightIcon={{
+                        type: "material-community",
+                        name: "text-box-plus-outline",
+                        color: "#c2c2c2"
+                    }}
                 />
         </View>
     );
@@ -231,6 +268,17 @@ function ImageRestaurat({ imageRestaurant, }){
     );
 }
 
+function MapRestaurant({isVisibleMap, setIsVisibleMap, setLocationRestaurant, toastRef, }){
+    return (
+        <Modal
+            isVisible={isVisibleMap}
+            setVisible={setIsVisibleMap}
+        >
+            <Text>Map goes here...!!!</Text>
+        </Modal>
+    );
+}
+
 const styles = StyleSheet.create({
     viewContainer: {
         top: 10,
@@ -252,7 +300,7 @@ const styles = StyleSheet.create({
     },
 
     inputPhone: {
-        width: "80%",
+        width: "100%",
     },
 
     inputTextArea: {

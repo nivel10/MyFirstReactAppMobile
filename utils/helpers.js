@@ -1,5 +1,6 @@
 import * as Permissions from 'expo-permissions';
 import * as ImagePicker from 'expo-image-picker';
+import * as Location from 'expo-location';
 import { Alert } from 'react-native'
 
 export function validateEmail(email) {
@@ -36,4 +37,30 @@ export const fileToBlobAsync = async (path) => {
     const fileFullPat = await fetch(path);
     const blob = await fileFullPat.blob();
     return blob;
+}
+
+export const getCurrentLocationAsync = async () => {
+    const response = {status: false, location: null, error: null, };
+    try {
+        const resultPermissions = await Permissions.askAsync(Permissions.LOCATION);
+
+        if(!resultPermissions.status == "denied"){
+            Alert.alert("Warning", "You must give permission for the location.");
+            return response;
+        }
+
+        const position = await Location.getCurrentPositionAsync({});
+        const location = {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+            latitudDelta: 0.001,
+            longitudDelta: 0.001,
+        }
+
+        response.status = true;
+        response.location = location;
+    } catch (ex) {
+        response.error = ex;
+    }
+    return response;
 }
