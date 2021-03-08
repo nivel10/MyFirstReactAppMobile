@@ -278,6 +278,7 @@ function MapRestaurant({isVisibleMap, setIsVisibleMap, locationRestaurant, setLo
                 console.log(response);
             }
             else{
+                Alert.alert("Error", response.error.message);
                 console.log(response);
             }
         })()
@@ -311,14 +312,25 @@ function MapRestaurant({isVisibleMap, setIsVisibleMap, locationRestaurant, setLo
                     style={styles.viewMapBtn}
                 >
                     <Button 
-                        title="Save location"
+                        //title="Save"
                         containerStyle={styles.viewMapBtnContainerSave}
                         buttonStyle={styles.viewMapBtnSave}
+                        icon={{
+                            type:"material-community",
+                            name:"content-save",
+                            color: "#767474",
+                        }}
                     />
                     <Button 
-                        title="Cancel location"
+                        //title="Cancel"
                         containerStyle={styles.viewMapBtnContainerCancel}
                         buttonStyle={styles.viewMapBtnCancel}
+                        icon={{
+                            type:"material-community",
+                            name:"close-circle",
+                            color: "#767474",
+                        }}
+                        onPress={() => setIsVisibleMap(false)}
                     />
                 </View>
             </View>
