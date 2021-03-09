@@ -21,11 +21,26 @@ export default function AddRestaurantForm({ toastRef, setShowLoading, navigation
     const [isVisibleMap, setIsVisibleMap] = useState(false);
     const [locationRestaurant, setLocationRestaurant] = useState(null);
 
-    const addRestaurant = () => {
+    const addRestaurant = async () => {
         if(!validForm()){
             return;
         }
+
+        setShowLoading(true);
+        const response = await uploadImagesAsync();
+        setShowLoading(false);
+
         console.log("Ok");
+    }
+
+    const uploadImagesAsync = async () =>{
+        const imagesUrl = [];
+
+        await Promise.all(
+            map(imagesSelected, async(image) =>{
+                
+            })
+        );
     }
 
     const clearErrors = () =>{
