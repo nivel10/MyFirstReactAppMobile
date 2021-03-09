@@ -293,7 +293,6 @@ function MapRestaurant({isVisibleMap, setIsVisibleMap, locationRestaurant, setLo
         (async () => {
             const response = await getCurrentLocationAsync();
             if(response.status){
-                //setLocationRestaurant(response.location);
                 setNewRegion(response.location);
             }
             else{
@@ -309,19 +308,15 @@ function MapRestaurant({isVisibleMap, setIsVisibleMap, locationRestaurant, setLo
         >
             <View>
                 {
-                    //locationRestaurant  && (
                     newRegion && (
                         <MapView
                             style={styles.mapViewStayle}
-                            //initialRegion={locationRestaurant}
                             initialRegion={newRegion}
                             showsUserLocation={true}
                             onRegionChange={(region) => setNewRegion(region)}
                         >
                             <MapView.Marker
                                 coordinate={{
-                                    //latitude: locationRestaurant.latitude,
-                                    //longitude: locationRestaurant.longitude,
                                     latitude: newRegion.latitude,
                                     longitude: newRegion.longitude,
                                 }}
