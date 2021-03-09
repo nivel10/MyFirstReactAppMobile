@@ -5,7 +5,7 @@ import CountryPicker from 'react-native-country-picker-modal';
 import { map, size, filter, } from 'lodash';
 import MapView from 'react-native-maps';
 
-import { getCurrentLocationAsync, loadImageFromGalleryAsync } from '../../utils/helpers';
+import { getCurrentLocationAsync, loadImageFromGalleryAsync, reverseGeocodeAsync } from '../../utils/helpers';
 import Modal from '../../components/Modal';
 
 const widthScreen = Dimensions.get("window").width;
@@ -22,8 +22,6 @@ export default function AddRestaurantForm({ toastRef, setShowLoading, navigation
     const [locationRestaurant, setLocationRestaurant] = useState(null);
 
     const addRestaurant = () => {
-        console.log(formData)
-        console.log("Ok");
     }
 
     return (
@@ -42,6 +40,7 @@ export default function AddRestaurantForm({ toastRef, setShowLoading, navigation
                 errorPhone={errorPhone}
                 errorAddress={errorAddress}
                 setIsVisibleMap={setIsVisibleMap}
+                locationRestaurant={locationRestaurant}
             />
 
             <UploadImage
@@ -60,6 +59,8 @@ export default function AddRestaurantForm({ toastRef, setShowLoading, navigation
                 setIsVisibleMap={setIsVisibleMap}
                 locationRestaurant={locationRestaurant}
                 setLocationRestaurant={setLocationRestaurant}
+                formData={formData}
+                setFormData={setFormData}
                 toastRef={toastRef}
             />
         </ScrollView>
@@ -78,7 +79,7 @@ const defaultFormValues = () =>{
     };
 }
 
-function FormAdd({ formData, setFormData, errorName, errorDescription, errorEmail, errorPhone, errorAddress, setIsVisibleMap, }){
+function FormAdd({ formData, setFormData, errorName, errorDescription, errorEmail, errorPhone, errorAddress, setIsVisibleMap, locationRestaurant, }){
     const [country, setCountry] = useState("VE");
     const [callingCode, setCallingCode] = useState("58");
     const [phone, setPhone] = useState("");
@@ -111,7 +112,7 @@ function FormAdd({ formData, setFormData, errorName, errorDescription, errorEmai
                 rightIcon={{
                     type: "material-community",
                     name: "google-maps",
-                    color: "#c2c2c2",
+                    color: locationRestaurant !== null ? "#f2936c" : "#c2c2c2",
                     onPress:() => setIsVisibleMap(true),
                 }}
             />
@@ -269,17 +270,34 @@ function ImageRestaurat({ imageRestaurant, }){
     );
 }
 
-function MapRestaurant({isVisibleMap, setIsVisibleMap, locationRestaurant, setLocationRestaurant, toastRef, }){
+function MapRestaurant({isVisibleMap, setIsVisibleMap, locationRestaurant, setLocationRestaurant, formData, setFormData, toastRef, }){
+
+    const [newRegion, setNewRegion] = useState(null);
+
+    const confirmLocation = async () =>{
+        setLocationRestaurant(newRegion);
+
+        const response = await reverseGeocodeAsync(newRegion);
+        if(!response.status){
+            Alert.alert("Error", response.ex.message);
+        }
+        else{
+            setFormData({...formData, "address" : response.address.getFullAddress, });
+            toastRef.current.show("Location saved successfully.", 1500);
+        }
+        console.log(response);
+        setIsVisibleMap(false);
+    }
+
     useEffect(() => {
         (async () => {
             const response = await getCurrentLocationAsync();
             if(response.status){
-                setLocationRestaurant(response.location);
-                console.log(response);
+                //setLocationRestaurant(response.location);
+                setNewRegion(response.location);
             }
             else{
                 Alert.alert("Error", response.error.message);
-                console.log(response);
             }
         })()
     }, [])
@@ -291,16 +309,21 @@ function MapRestaurant({isVisibleMap, setIsVisibleMap, locationRestaurant, setLo
         >
             <View>
                 {
-                    locationRestaurant  && (
+                    //locationRestaurant  && (
+                    newRegion && (
                         <MapView
                             style={styles.mapViewStayle}
-                            initialRegion={locationRestaurant}
+                            //initialRegion={locationRestaurant}
+                            initialRegion={newRegion}
                             showsUserLocation={true}
+                            onRegionChange={(region) => setNewRegion(region)}
                         >
                             <MapView.Marker
                                 coordinate={{
-                                    latitude: locationRestaurant.latitude,
-                                    longitude: locationRestaurant.longitude,
+                                    //latitude: locationRestaurant.latitude,
+                                    //longitude: locationRestaurant.longitude,
+                                    latitude: newRegion.latitude,
+                                    longitude: newRegion.longitude,
                                 }}
                                 draggable={true}
                             />
@@ -320,6 +343,7 @@ function MapRestaurant({isVisibleMap, setIsVisibleMap, locationRestaurant, setLo
                             name:"content-save",
                             color: "#767474",
                         }}
+                        onPress={confirmLocation}
                     />
                     <Button 
                         //title="Cancel"

@@ -43,7 +43,6 @@ export const getCurrentLocationAsync = async () => {
     const response = {status: false, location: null, error: null, };
     try {
         const resultPermissions = await Permissions.askAsync(Permissions.LOCATION);
-
         if(!resultPermissions.status == "denied"){
             Alert.alert("Warning", "You must give permission for the location.");
             return response;
@@ -55,7 +54,7 @@ export const getCurrentLocationAsync = async () => {
             longitude: position.coords.longitude,
             latitudeDelta: 0.001,
             longitudeDelta: 0.001,
-        }
+        };
 
         response.status = true;
         response.location = location;
@@ -63,4 +62,31 @@ export const getCurrentLocationAsync = async () => {
         response.error = ex;
     }
     return response;
+}
+
+export const reverseGeocodeAsync = async(geoLocation) =>
+{
+    const result = {status: false, address: null, error: null, };
+    try {
+        const positionAddress = await Location.reverseGeocodeAsync(geoLocation);
+        const address = {
+            country: positionAddress[0].country,
+            city: positionAddress[0].city,
+            subregion: positionAddress[0].subregion,
+            street: positionAddress[0].subregion,
+            region: positionAddress[0].region,
+            district: positionAddress[0].district,
+            timezone: positionAddress[0].timezone,
+            name: positionAddress[0].name,
+            postalCode: positionAddress[0].postalCode,
+            isoCountryCode: positionAddress[0].isoCountryCode,
+            getFullAddress: positionAddress[0].name + ', ' + positionAddress[0].street + '. ' + positionAddress[0].district + ' - ' + positionAddress[0].city + ' (' + positionAddress[0].postalCode + ').',
+        };
+        
+        result.status = true;
+        result.address = address;
+    } catch (ex) {
+        result.error = ex;
+    }
+    return result;
 }
