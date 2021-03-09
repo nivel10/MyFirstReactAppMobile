@@ -2,10 +2,10 @@ import React, {useState, useEffect, } from 'react'
 import { Alert, Dimensions, ScrollView, StyleSheet, Text, View, } from 'react-native'
 import { Avatar, Button, Icon, Image, Input, } from 'react-native-elements';
 import CountryPicker from 'react-native-country-picker-modal';
-import { map, size, filter, } from 'lodash';
+import { map, size, filter, isEmpty, } from 'lodash';
 import MapView from 'react-native-maps';
 
-import { getCurrentLocationAsync, loadImageFromGalleryAsync, reverseGeocodeAsync } from '../../utils/helpers';
+import { getCurrentLocationAsync, loadImageFromGalleryAsync, reverseGeocodeAsync, validateEmail } from '../../utils/helpers';
 import Modal from '../../components/Modal';
 
 const widthScreen = Dimensions.get("window").width;
@@ -22,6 +22,59 @@ export default function AddRestaurantForm({ toastRef, setShowLoading, navigation
     const [locationRestaurant, setLocationRestaurant] = useState(null);
 
     const addRestaurant = () => {
+        if(!validForm()){
+            return;
+        }
+        console.log("Ok");
+    }
+
+    const clearErrors = () =>{
+        setErrorAddress(null);
+        setErrorDescription(null);
+        setErrorEmail(null);
+        setErrorPhone(null);
+        setErrorName(null);
+    }
+
+    const validForm = () =>{
+        clearErrors();
+        let isValid = true;
+
+        if(isEmpty(formData.name)){
+            setErrorName("Your must enter a name.");
+            isValid = false;
+        }
+
+        if(isEmpty(formData.address)){
+            setErrorAddress("You must enter an address");
+            isValid = false;
+        }
+        if(!validateEmail(formData.email)){
+            setErrorEmail("You must enter a valid email.");
+            isValid = false;
+        }
+
+        if(isEmpty(formData.phone)){
+            setErrorPhone("You must enter a phone number");
+            isValid = false;
+        } else if(size(formData.phone) < 10){
+            setErrorPhone("You must enter a valid phone number");
+            isValid = false;
+        }
+
+        if(isEmpty(formData.description)){
+            setErrorDescription("You must enter a description");
+            isValid = false;
+        }
+
+        if(!locationRestaurant){
+            toastRef.current.show("You must locate the restaurant on the map.", 1500);
+            isValid = false;
+        } else if (size(imagesSelected) === 0){
+            toastRef.current.show("You must add at least one image to the restaurant.", 1500);
+            isValid = false;
+        }
+        return isValid;
     }
 
     return (
@@ -53,11 +106,11 @@ export default function AddRestaurantForm({ toastRef, setShowLoading, navigation
                 title="Save"
                 onPress={addRestaurant}
                 buttonStyle={styles.btnAddRestaurant}
+                onPress={addRestaurant}
             />
             <MapRestaurant
                 isVisibleMap={isVisibleMap}
                 setIsVisibleMap={setIsVisibleMap}
-                locationRestaurant={locationRestaurant}
                 setLocationRestaurant={setLocationRestaurant}
                 formData={formData}
                 setFormData={setFormData}
@@ -270,7 +323,7 @@ function ImageRestaurat({ imageRestaurant, }){
     );
 }
 
-function MapRestaurant({isVisibleMap, setIsVisibleMap, locationRestaurant, setLocationRestaurant, formData, setFormData, toastRef, }){
+function MapRestaurant({isVisibleMap, setIsVisibleMap, setLocationRestaurant, formData, setFormData, toastRef, }){
 
     const [newRegion, setNewRegion] = useState(null);
 
@@ -285,7 +338,6 @@ function MapRestaurant({isVisibleMap, setIsVisibleMap, locationRestaurant, setLo
             setFormData({...formData, "address" : response.address.getFullAddress, });
             toastRef.current.show("Location saved successfully.", 1500);
         }
-        console.log(response);
         setIsVisibleMap(false);
     }
 
