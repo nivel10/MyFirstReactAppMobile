@@ -30,7 +30,6 @@ export default function AddRestaurantForm({ toastRef, setShowLoading, navigation
 
         setShowLoading(true);
         const responseUploadImage = await localUploadImagesAsync();
-        console.log("0");
         const restaurant = {
             address: formData.address,
             callingCode: formData.callingCode,
@@ -46,19 +45,14 @@ export default function AddRestaurantForm({ toastRef, setShowLoading, navigation
             createAt: new Date(),
             createBy: getCurrentUser().uid,
         };
-        console.log("1");
         const response = await addDocumentWithOutIdAsync("restaurants", restaurant);
-        console.log("2");
         setShowLoading(false);
-
-        console.log("3");
+        
         if(!response.statusResponse){
             Alert.alert("Error", response.error.message);
             return;
         }
-        console.log("4");
         navigation.navigate("restaurants");
-        
     }
 
     const localUploadImagesAsync = async () =>{
