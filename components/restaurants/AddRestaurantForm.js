@@ -4,9 +4,11 @@ import { Avatar, Button, Icon, Image, Input, } from 'react-native-elements';
 import CountryPicker from 'react-native-country-picker-modal';
 import { map, size, filter, isEmpty, } from 'lodash';
 import MapView from 'react-native-maps';
+import uuid from 'random-uuid-v4';
 
 import { getCurrentLocationAsync, loadImageFromGalleryAsync, reverseGeocodeAsync, validateEmail } from '../../utils/helpers';
 import Modal from '../../components/Modal';
+import { uploadImageAsync } from '../../utils/actions';
 
 const widthScreen = Dimensions.get("window").width;
 
@@ -27,20 +29,26 @@ export default function AddRestaurantForm({ toastRef, setShowLoading, navigation
         }
 
         setShowLoading(true);
-        const response = await uploadImagesAsync();
+        const response = await localUploadImagesAsync();
+        console.log(response);
         setShowLoading(false);
 
         console.log("Ok");
     }
 
-    const uploadImagesAsync = async () =>{
+    const localUploadImagesAsync = async () =>{
         const imagesUrl = [];
 
         await Promise.all(
             map(imagesSelected, async(image) =>{
-                
+                const response = await uploadImageAsync(image, "restaurants", uuid());
+                if(response.statusResponse){
+                    imagesUrl.push(response.url);
+                }
             })
         );
+
+        return imagesUrl;
     }
 
     const clearErrors = () =>{
@@ -119,7 +127,6 @@ export default function AddRestaurantForm({ toastRef, setShowLoading, navigation
 
             <Button
                 title="Save"
-                onPress={addRestaurant}
                 buttonStyle={styles.btnAddRestaurant}
                 onPress={addRestaurant}
             />
