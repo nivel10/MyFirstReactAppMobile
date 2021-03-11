@@ -17,12 +17,19 @@
       "**/*"
     ],
     "ios": {
+      "bundleIdentifier": "com.chejconsultor.restaurants",
       "supportsTablet": true
     },
     "android": {
+      "package": "com.chejconsultor.restaurants",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
+      },
+      "config": {
+        "googleMaps": {
+          "apiKey": "AIzaSyCdWNmm_okGUjlf_QCHdzqvnsabekq4bu4"
+        }
       },
       "permissions": [
         "CAMERA_ROLL",
