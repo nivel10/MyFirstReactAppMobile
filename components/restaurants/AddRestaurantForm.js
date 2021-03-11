@@ -1,14 +1,14 @@
 import React, {useState, useEffect, } from 'react'
 import { Alert, Dimensions, ScrollView, StyleSheet, Text, View, } from 'react-native'
 import { Avatar, Button, Icon, Image, Input, } from 'react-native-elements';
+import { map, size, filter, isEmpty, fromPairs, } from 'lodash';
 import CountryPicker from 'react-native-country-picker-modal';
-import { map, size, filter, isEmpty, } from 'lodash';
 import MapView from 'react-native-maps';
 import uuid from 'random-uuid-v4';
 
 import { getCurrentLocationAsync, loadImageFromGalleryAsync, reverseGeocodeAsync, validateEmail } from '../../utils/helpers';
+import { addDocumentWithOutIdAsync, getCurrentUser, uploadImageAsync } from '../../utils/actions';
 import Modal from '../../components/Modal';
-import { uploadImageAsync } from '../../utils/actions';
 
 const widthScreen = Dimensions.get("window").width;
 
@@ -29,11 +29,36 @@ export default function AddRestaurantForm({ toastRef, setShowLoading, navigation
         }
 
         setShowLoading(true);
-        const response = await localUploadImagesAsync();
-        console.log(response);
+        const responseUploadImage = await localUploadImagesAsync();
+        console.log("0");
+        const restaurant = {
+            address: formData.address,
+            callingCode: formData.callingCode,
+            description: formData.description,
+            email: formData.email,
+            images: responseUploadImage,
+            location: locationRestaurant,
+            name: formData.name,
+            phone: formData.phone,
+            rating: 0,
+            ratingTotal: 0,
+            quantityVoting: 0,
+            createAt: new Date(),
+            createBy: getCurrentUser().uid,
+        };
+        console.log("1");
+        const response = await addDocumentWithOutIdAsync("restaurants", restaurant);
+        console.log("2");
         setShowLoading(false);
 
-        console.log("Ok");
+        console.log("3");
+        if(!response.statusResponse){
+            Alert.alert("Error", response.error.message);
+            return;
+        }
+        console.log("4");
+        navigation.navigate("restaurants");
+        
     }
 
     const localUploadImagesAsync = async () =>{

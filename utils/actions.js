@@ -126,3 +126,14 @@ export const updatePasswordAsync = async (newPassword) => {
     }
     return result;
 }
+
+export const addDocumentWithOutIdAsync = async(collection, data) =>{
+    const result = {statusResponse: true, error: null, };
+    try {
+        await db.collection(collection).add(data);
+    } catch (ex) {
+        result.statusResponse = false;
+        result.error = ex;
+    }
+    return result;
+}
