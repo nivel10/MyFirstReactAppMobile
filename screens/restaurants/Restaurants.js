@@ -1,17 +1,20 @@
-import React, {useState, useEffect, useCallback, } from 'react'
+import React, {useState, useEffect, useCallback, useRef, } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 import { Icon } from 'react-native-elements'
 import { useFocusEffect, } from '@react-navigation/native';
 import { size } from 'lodash';
+import Toast from 'react-native-easy-toast';
 
 import firebase from 'firebase/app';
 
 import Loading from '../../components/Loading';
-import { getRestaurantsAsync } from '../../utils/actions';
+import { getMoreRestaurantsAsync, getRestaurantsAsync } from '../../utils/actions';
 import ListRestaurants from '../../components/restaurants/ListRestaurants';
 
 export default function Restaurants({ navigation }) {
 
+    const toastTimeShow = 1500;
+    const toastRef = useRef();
     const [user, setUser] = useState(null);
     const [startRestaurant, setStartRestaurant] = useState(null);
     const [restaurants, setRestaurants] = useState([]);
@@ -30,13 +33,33 @@ export default function Restaurants({ navigation }) {
         useCallback(async() => {
             setshowLoading(true);
             const response = await getRestaurantsAsync(limitRestaurants);
+            setshowLoading(false);
             if(response.statusResponse){
                 setStartRestaurant(response.startRestaurant);
                 setRestaurants(response.restaurants);
             }
-            setshowLoading(false);
+            else{
+                toastRef.current.show(response.error.message, toastTimeShow);
+            }
+            
         }, [])
     );
+
+    const handleLoadMoreAsync = async() =>{
+        if(!startRestaurant){
+            return;
+        }
+
+        setshowLoading(true);
+        const response = await getMoreRestaurantsAsync(limitRestaurants, startRestaurant);
+        setshowLoading(false);
+        if(response.statusResponse){
+            setStartRestaurant(response.startRestaurant);
+            setRestaurants([...restaurants, ...response.restaurants]);
+        } else {
+            toastRef.current.show(response.error.message, toastTimeShow);
+        }
+    }
 
     if(user === null){
         return <Loading
@@ -53,7 +76,9 @@ export default function Restaurants({ navigation }) {
                 size(restaurants) > 0 ? (
                     <ListRestaurants 
                         restaurants={restaurants} 
-                        navigation={navigation} />
+                        navigation={navigation} 
+                        handleLoadMore={handleLoadMoreAsync}
+                        />
                 ) : (
                     <View style={styles.notFoundView}>
                         <Text style={styles.notFoundText}>They are no registered restaurants yet...</Text>
@@ -76,6 +101,11 @@ export default function Restaurants({ navigation }) {
                 isVisible={showLoading}
                 text="Loading restaurants..."
             />
+            <Toast
+                ref={toastRef}
+                position="center"
+                opacity={0.9}
+             />
         </View>
     )
 }

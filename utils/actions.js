@@ -160,3 +160,27 @@ export const getRestaurantsAsync = async(limitRestaurants) => {
     }
     return result;
 }
+
+export const getMoreRestaurantsAsync = async(limitRestaurants, startRestaurant) =>{
+    const result = {statusResponse: true, error: null, restaurants: [], startRestaurant: null, };
+    try {
+        const response = await db
+            .collection("restaurants")
+            .orderBy("createAt", "desc")
+            .startAfter(startRestaurant.data().createAt)
+            .limit(limitRestaurants)
+            .get();
+        if(response.docs.length > 0){
+            result.startRestaurant = response.docs[response.docs.length - 1];
+        }
+        response.forEach((doc) => {
+            const restaurant = doc.data();
+            restaurant.id = doc.id;
+            result.restaurants.push(restaurant);
+        })
+    } catch (ex) {
+        result.statusResponse = false;
+        result.error = ex;
+    }
+    return result;
+}

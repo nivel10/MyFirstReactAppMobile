@@ -3,7 +3,7 @@ import React from 'react'
 import { ActivityIndicator, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { Icon, Image } from 'react-native-elements';
 
-export default function ListRestaurants({ restaurants, navigation, }) {
+export default function ListRestaurants({ restaurants, navigation, handleLoadMore, }) {
     return (
         <View>
             <FlatList
@@ -15,6 +15,8 @@ export default function ListRestaurants({ restaurants, navigation, }) {
                         navigation={navigation} 
                     />
                 )}
+                onEndReachedThreshold={0.5}
+                onEndReached={handleLoadMore}
             />
         </View>
     )
