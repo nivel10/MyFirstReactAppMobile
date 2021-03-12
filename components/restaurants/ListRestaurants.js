@@ -44,7 +44,7 @@ function Restaurant({ restaurant, navigation, }){
                             size(address) > 0 ? `${address.substr(0, 40)}...` : address
                         }
                         </Text>
-                    <Text style={styles.restaurantInformation}>+{callingCode} {phone}</Text>
+                    <Text style={styles.restaurantInformation}>+({callingCode}) {phone}</Text>
                     <Text style={styles.restaurantDescription}>
                         {
                             size(description) > 0 ? `${description.substr(0, 60)}...` : description
