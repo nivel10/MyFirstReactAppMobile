@@ -1,6 +1,7 @@
 import React, {useState, useEffect, useRef, } from 'react'
 import { Dimensions, ScrollView, StyleSheet, Text, View } from 'react-native'
 import Toast from 'react-native-easy-toast';
+import { Rating, } from 'react-native-elements';
 
 import Loading from '../../components/Loading';
 import CarouselImages from '../../components/restaurants/CarouselImages';
@@ -11,8 +12,7 @@ const widthScreen = Dimensions.get("window").width;
 export default function Restaurant({ navigation, route, }) {
 
     const {id, name, } = route.params;
-    navigation.setOptions({ title: name, });
-
+    //navigation.setOptions({ title: name, });
     const toastTimeShow = 1500;
     const toastRef = useRef();
     const [restaurant, setRestaurant] = useState(null);
@@ -28,6 +28,7 @@ export default function Restaurant({ navigation, route, }) {
                 toastRef.current.show(response.error.message, toastTimeShow);
             }
         })()
+        navigation.setOptions({ title: name, });
     }, [])
 
     if(!restaurant){
@@ -48,7 +49,11 @@ export default function Restaurant({ navigation, route, }) {
                 activeSlide={activeSlide}
                 setActiveSlide={setActiveSlide}
             />
-            <Text>{restaurant.description}</Text>
+            <RestaurantTitle 
+                name={restaurant.name} 
+                description={restaurant.description}
+                rating={restaurant.rating}
+            />
             <Toast
                 ref={toastRef} 
                 position="center"
@@ -58,8 +63,50 @@ export default function Restaurant({ navigation, route, }) {
     )
 }
 
+function RestaurantTitle({name, description, rating, }){
+    return (
+        <View style={styles.viewRestaurantTitle}>
+            <View style={styles.viewRestaurantContainer}>
+                <Text style={styles.restaunatName}>{name}</Text>
+                <Rating 
+                    imageSize={12}
+                    readOnly={true}
+                    startingValue={parseFloat(rating)}
+                    style={styles.rating}/>
+            </View>
+            <Text style={styles.restaunatDescription}>{description}</Text>
+        </View>
+    );
+}
+
 const styles = StyleSheet.create({
     viewBody: {
+        backgroundColor: "#ffff",
         flex: 1,
+    },
+
+    viewRestaurantTitle: {
+        padding: 15,
+    },
+
+    viewRestaurantContainer: {
+        flexDirection: "row",
+    },
+
+    restaunatName: {
+        fontWeight: "bold",
+        color: "#3c3c3c",
+    },
+
+    rating: {
+        backgroundColor: "transparent",
+        position: "absolute",
+        right: 0,
+    },
+
+    restaunatDescription: {
+        marginTop: 10,
+        color: "#7c7c82",
+        textAlign: "justify",
     },
 })

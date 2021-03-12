@@ -29,18 +29,20 @@ export default function Restaurants({ navigation }) {
     }, []);
 
     useFocusEffect(
-        useCallback(async() => {
-            setshowLoading(true);
-            const response = await getRestaurantsAsync(limitRestaurants);
-            setshowLoading(false);
-            if(response.statusResponse){
-                setStartRestaurant(response.startRestaurant);
-                setRestaurants(response.restaurants);
+        useCallback(() => {
+            async function localGetRestaurantsAsync(){
+                setshowLoading(true);
+                const response = await getRestaurantsAsync(limitRestaurants);
+                setshowLoading(false);
+                if(response.statusResponse){
+                    setStartRestaurant(response.startRestaurant);
+                    setRestaurants(response.restaurants);
+                }
+                else{
+                    toastRef.current.show(response.error.message, toastTimeShow);
+                }
             }
-            else{
-                toastRef.current.show(response.error.message, toastTimeShow);
-            }
-            
+            localGetRestaurantsAsync();
         }, [])
     );
 
