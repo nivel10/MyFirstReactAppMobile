@@ -138,6 +138,19 @@ export const addDocumentWithOutIdAsync = async(collection, data) =>{
     return result;
 }
 
+export const getDocumentByIdAsync = async(collection, id) =>{
+    const result = { statusResponse: true, document: null, error: null, };
+    try {
+        const response = await db.collection(collection).doc(id).get();
+        result.document = response.data();
+        result.document.id = response.id;
+    } catch (ex) {
+        result.statusResponse = false;
+        result.error = ex;
+    }
+    return result;
+}
+
 export const getRestaurantsAsync = async(limitRestaurants) => {
     const result = {statusResponse: true, error: null, restaurants: [], startRestaurant: null, };
     try {

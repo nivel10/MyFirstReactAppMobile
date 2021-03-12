@@ -21,7 +21,6 @@ export default function Restaurants({ navigation }) {
     const [showLoading, setshowLoading] = useState(false);
 
     const limitRestaurants = 7;
-    //console.log(restaurants);
 
     useEffect(() => {
         firebase.auth().onAuthStateChanged((userInfo) => {
