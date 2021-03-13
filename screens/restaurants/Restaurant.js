@@ -6,7 +6,9 @@ import { Icon, ListItem, Rating, } from 'react-native-elements';
 
 import Loading from '../../components/Loading';
 import CarouselImages from '../../components/restaurants/CarouselImages';
+import ListReviews from '../../components/restaurants/ListReviews';
 import MapRestaurant from '../../components/restaurants/MapRestaurant';
+
 import { getDocumentByIdAsync } from '../../utils/actions';
 import { formatPhone } from '../../utils/helpers';
 
@@ -63,6 +65,9 @@ export default function Restaurant({ navigation, route, }) {
                 email={restaurant.email}
                 phone={formatPhone(restaurant.callingCode, restaurant.phone)}
             />
+            <ListReviews 
+                navigation={navigation}
+                idRestaurant={restaurant.id}/>
             <Toast
                 ref={toastRef} 
                 position="center"
