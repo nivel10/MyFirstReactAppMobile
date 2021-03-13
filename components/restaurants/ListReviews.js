@@ -1,8 +1,9 @@
 import React, { useState, } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
-import { Button } from 'react-native-elements';
+import { Button, Icon } from 'react-native-elements';
 
 import firebaseApp from 'firebase/app';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 
 export default function ListReviews({ navigation, idRestaurant, }) {
@@ -32,10 +33,17 @@ export default function ListReviews({ navigation, idRestaurant, }) {
                     style={styles.mustLoginText}
                     onPress={() => navigation.navigate("login")}
                     >
-                    To write an opinion you must be logged in.{" "}
-                    <Text style={styles.loginText}>
-                        Click here to login.
-                    </Text>
+                    To write an opinion you must be logged in.{"\n "}
+                    <TouchableOpacity style={styles.itemsTouchableOpacity}>
+                        <Icon 
+                            type="material-community"
+                            name="account-circle"
+                            color="#3c3c3c"
+                        />
+                        <Text style={styles.loginText}>
+                            Click here to login.
+                        </Text>
+                    </TouchableOpacity>
                 </Text>
                 )
            }
@@ -52,6 +60,13 @@ const styles = StyleSheet.create({
         color: "#f2936c",
     },
 
+    itemsTouchableOpacity: {
+        alignItems: "center",
+        flex: 1,
+        flexDirection: "row",
+        justifyContent: "flex-start",
+    },
+
     mustLoginText: {
         textAlign: "center",
         color: "#3c3c3c",
@@ -59,6 +74,7 @@ const styles = StyleSheet.create({
     },
 
     loginText: {
+        color: "#3c3c3c",
         fontWeight: "bold",
     },
 })
