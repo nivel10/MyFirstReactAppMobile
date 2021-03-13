@@ -3,6 +3,8 @@ import React from 'react'
 import { ActivityIndicator, FlatList, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { Icon, Image } from 'react-native-elements';
 
+import { formatPhone } from '../../utils/helpers';
+
 export default function ListRestaurants({ restaurants, navigation, handleLoadMore, }) {
     return (
         <View>
@@ -50,12 +52,14 @@ function Restaurant({ restaurant, navigation, }){
                             size(address) > 0 ? `${address.substr(0, 40)}...` : address
                         }
                         </Text>
-                    <Text style={styles.restaurantInformation}>+({callingCode}) {phone}</Text>
+                    {/* <Text style={styles.restaurantInformation}>+({callingCode}) {phone}</Text> */}
+                    <Text style={styles.restaurantInformation}>{formatPhone(callingCode, phone)}</Text>
                     <Text style={styles.restaurantDescription}>
                         {
                             size(description) > 0 ? `${description.substr(0, 60)}...` : description
                         }
                     </Text>
+                    
                 </View>
             </View>
         </TouchableOpacity>

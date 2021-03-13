@@ -2,6 +2,7 @@ import * as Permissions from 'expo-permissions';
 import * as ImagePicker from 'expo-image-picker';
 import * as Location from 'expo-location';
 import { Alert } from 'react-native'
+import { getCallingCode } from 'react-native-country-picker-modal';
 
 export function validateEmail(email) {
     const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -89,4 +90,8 @@ export const reverseGeocodeAsync = async(geoLocation) =>
         result.error = ex;
     }
     return result;
+}
+
+export const formatPhone = (callingCode, phone) =>{
+    return `+(${callingCode}) ${phone}`;
 }
