@@ -12,7 +12,6 @@ const widthScreen = Dimensions.get("window").width;
 export default function Restaurant({ navigation, route, }) {
 
     const {id, name, } = route.params;
-    //navigation.setOptions({ title: name, });
     const toastTimeShow = 1500;
     const toastRef = useRef();
     const [restaurant, setRestaurant] = useState(null);
