@@ -6,7 +6,7 @@ import firebaseApp from 'firebase/app';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
 
-export default function ListReviews({ navigation, idRestaurant, }) {
+export default function ListReviews({ navigation, idRestaurant, name, }) {
 
     const [userLogged, setUserLogged] = useState(false);
 
@@ -27,6 +27,7 @@ export default function ListReviews({ navigation, idRestaurant, }) {
                         name: "square-edit-outline", 
                         color: "#f2936c", 
                     }}
+                    onPress={() => navigation.navigate("addReviewRestaurant", {idRestaurant, name, })}
                 />
                ) : (
                 <Text 

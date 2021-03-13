@@ -67,7 +67,8 @@ export default function Restaurant({ navigation, route, }) {
             />
             <ListReviews 
                 navigation={navigation}
-                idRestaurant={restaurant.id}/>
+                idRestaurant={restaurant.id}
+                name={restaurant.name}/>
             <Toast
                 ref={toastRef} 
                 position="center"
