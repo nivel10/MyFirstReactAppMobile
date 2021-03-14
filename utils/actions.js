@@ -230,3 +230,19 @@ export const getRestaurantReviewsAsync = async(id) => {
     }
     return result;
 }
+
+export const getIsFavoriteAsync = async(idRestaurant) =>{
+    const result = {statusResponse: true, error: null, isFavorite: false, };
+    try {
+        const response = await db
+            .collection("favorites")
+            .where("idUser", "==", getCurrentUser().uid)
+            .where("idRestaurant", "==", idRestaurant)
+            .get();
+            result.isFavorite = response.docs.length > 0;
+    } catch (ex) {
+        result.statusResponse = false;
+        result.error = ex;
+    }
+    return result;
+}
