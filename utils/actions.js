@@ -214,7 +214,7 @@ export const getRestaurantReviewsAsync = async(id) => {
     try {
         const response = await db
             .collection("reviews")
-            .orderBy("createAt", "desc")
+            //.orderBy("createAt", "desc")
             .where("idRestaurant", "==", id)
             .get();
         

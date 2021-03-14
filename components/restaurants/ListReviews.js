@@ -1,13 +1,14 @@
-import React, { useState, useEffect, } from 'react'
+import React, { useState, useCallback, } from 'react'
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native'
 import { Avatar, Button, Icon, Rating } from 'react-native-elements';
+import { useFocusEffect, } from '@react-navigation/native'
+
+import { size, map } from 'lodash';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import { getRestaurantReviewsAsync } from '../../utils/actions';
 
 import firebaseApp from 'firebase/app';
 import moment from 'moment/min/moment-with-locales';
-import { TouchableOpacity } from 'react-native-gesture-handler';
-
-import { getRestaurantReviewsAsync } from '../../utils/actions';
-import { size } from 'lodash';
 
 moment.locale("en");
 
@@ -20,16 +21,18 @@ export default function ListReviews({ navigation, idRestaurant, name, }) {
         user ? setUserLogged(true) : setUserLogged(false);
     });
 
-    useEffect(() => {
-        (async() => {
-            const response = await getRestaurantReviewsAsync(idRestaurant);
-            if(response.statusResponse){
-                setReviews(response.reviews);
-            } else {
-                console.log(response.error.message)
-            }
-        })()
-    }, []);
+    useFocusEffect(
+        useCallback(() => {
+            (async() => {
+                const response = await getRestaurantReviewsAsync(idRestaurant);
+                if(response.statusResponse){
+                    setReviews(response.reviews);
+                } else {
+                    console.log(response.error.message)
+                }
+            })()
+        }, [])
+    );
 
     return (
         <View>
@@ -52,36 +55,36 @@ export default function ListReviews({ navigation, idRestaurant, name, }) {
                     onPress={() => navigation.navigate("login")}
                     >
                     To write an opinion you must be logged in.{"\n "}
-                    <TouchableOpacity style={styles.itemsTouchableOpacity}>
+                    {/* <TouchableOpacity style={styles.itemsTouchableOpacity}>
                         <Icon 
                             type="material-community"
                             name="account-circle"
                             color="#3c3c3c"
-                        />
+                        /> */}
                         <Text style={styles.loginText}>
                             Click here to login.
                         </Text>
-                    </TouchableOpacity>
+                    {/* </TouchableOpacity> */}
                 </Text>
                 )
            }
+           <View>
            {
-               size(reviews) > 0 ? (
+               size(reviews) > 0 && (
                     map(reviews, (review, index) => (
-                        <Reviews 
-                            key={index} 
+                        <Reviews
+                            key={index}
                             review={review}
                         />
                     ))
-               ) : (
-                   <Text>Hola</Text>
-               )
+               ) 
            }
+           </View>
         </View>
     )
 }
 
-function Reviews({key, review}){
+function Reviews({review}){
     const {title, comment, createAt, avatarUser, rating, }  = review;
     const createReview = new Date(createAt.seconds * 1000);
     return (
@@ -140,7 +143,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         padding: 10,
         paddingBottom: 10,
-        borderBottomColor: "#f2936c",
+        borderBottomColor: "#917464",
         borderBottomWidth: 1,
     },
 
@@ -164,13 +167,13 @@ const styles = StyleSheet.create({
 
     reviewText: {
         paddingTop: 2,
-        color: "#f2936c",
+        color: "#3c3c3c",
         marginTop: 5,
     },
 
     reviewDate: {
         marginTop: 5,
-        color: "#f2936c",
+        color: "#3c3c3c",
         fontSize: 11,
         position: "absolute",
         right: 0,
