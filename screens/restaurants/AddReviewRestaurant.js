@@ -2,13 +2,17 @@ import React, { useEffect, useState, useRef, } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 import { AirbnbRating, Button, Input, } from 'react-native-elements';
 
+import { isEmpty } from 'lodash';
+
 import Toast from 'react-native-easy-toast';
+import Loading from '../../components/Loading';
+import { addDocumentWithOutIdAsync, getCurrentUser } from '../../utils/actions';
 
 export default function AddReviewRestaurant({ navigation, route, }) {
 
-    const { idRestaura, name, } = route.params;
+    const { idRestaurant, name, } = route.params;
 
-    const [corating, setRating] = useState(null);
+    const [rating, setRating] = useState(null);
     const [title, setTitle] = useState("");
     const [errorTitle, setErrorTitle] = useState(null);
     const [review, setReview] = useState("");
@@ -16,9 +20,54 @@ export default function AddReviewRestaurant({ navigation, route, }) {
     const [showLoading, setShowLoading] = useState(false);
 
     const toastRef = useRef();
+    const toastRefTimer = 1500;
 
-    const addReviewAsync = () =>{
-        console.log(review);
+    const addReviewAsync = async() =>{
+        if(!validForm()){
+            return;
+        }
+
+        setShowLoading(true);
+        const user = getCurrentUser();
+
+        const data = {
+            idUser: user.uid,
+            avatarUser: user.photoURL,
+            idRestaurant: idRestaurant,
+            title: title,
+            rating: rating,
+            comment: review,
+            createAt: new Date(),
+        };
+        const responseAdd = await addDocumentWithOutIdAsync("reviews", data);
+        if(!responseAdd.statusResponse){
+            setShowLoading(false);
+            toastRef.current.show(responseAdd.error.message, toastRefTimer);
+        }
+        setShowLoading(false);
+    }
+
+    const validForm = () =>{
+        setErrorTitle(null);
+        setErrorReview(null);
+        let isValid = true;
+
+        if(!rating){
+            toastRef.current.show("You must give a score to the restaurant.", toastRefTimer);
+            isValid = false;
+        }
+
+        if(isEmpty(title)){
+            setErrorTitle("You must enter a title to the comment.");
+            isValid = false;
+        }
+
+        if(isEmpty(review)){
+            setErrorReview("You must enter a comment.");
+            isValid = false;
+        }
+
+        return isValid;
     }
 
     return (
@@ -30,6 +79,7 @@ export default function AddReviewRestaurant({ navigation, route, }) {
                     reviews={["Bad :/", "Regular :|", "Normal :)", "Good ;)", "Excellent XD",]}
                     defaultRating={0}
                     size={30}
+                    onFinishRating={(value) => setRating(value)}
                 />
             </View>
             <View style={styles.formReview}>
@@ -70,6 +120,14 @@ export default function AddReviewRestaurant({ navigation, route, }) {
                     />
                 </View>
             </View>
+            <Toast 
+                ref={toastRef}
+                position="center"
+                opacity={0.9}/>
+
+            <Loading 
+                isVisible={showLoading} 
+                text="Processing please wait..."/>
         </View>
     )
 }
