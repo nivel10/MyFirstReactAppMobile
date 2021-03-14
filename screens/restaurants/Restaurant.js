@@ -1,8 +1,10 @@
-import { map } from 'lodash';
-import React, {useState, useEffect, useRef, } from 'react'
+import React, {useCallback, useState, useRef, } from 'react'
 import { Dimensions, ScrollView, StyleSheet, Text, View } from 'react-native'
-import Toast from 'react-native-easy-toast';
 import { Icon, ListItem, Rating, } from 'react-native-elements';
+import { useFocusEffect, } from '@react-navigation/native'
+import { map } from 'lodash';
+
+import Toast from 'react-native-easy-toast';
 
 import Loading from '../../components/Loading';
 import CarouselImages from '../../components/restaurants/CarouselImages';
@@ -22,18 +24,20 @@ export default function Restaurant({ navigation, route, }) {
     const [restaurant, setRestaurant] = useState(null);
     const [activeSlide, setActiveSlide] = useState(0);
 
-    useEffect(() => {
-        (async() =>{
-            const response = await getDocumentByIdAsync("restaurants", id);
-            if(response.statusResponse){
-                setRestaurant(response.document);
-            } else {
-                setRestaurant({});
-                toastRef.current.show(response.error.message, toastTimeShow);
-            }
-        })()
-        navigation.setOptions({ title: name, });
-    }, [])
+    useFocusEffect(
+        useCallback(() => {
+            (async() =>{
+                const response = await getDocumentByIdAsync("restaurants", id);
+                if(response.statusResponse){
+                    setRestaurant(response.document);
+                } else {
+                    setRestaurant({});
+                    toastRef.current.show(response.error.message, toastTimeShow);
+                }
+            })()
+            navigation.setOptions({ title: name, });
+        }, [])
+    );
 
     if(!restaurant){
         return ( 

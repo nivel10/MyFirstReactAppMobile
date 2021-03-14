@@ -1,12 +1,13 @@
 import React, { useEffect, useState, useRef, } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 import { AirbnbRating, Button, Input, } from 'react-native-elements';
+import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view'
 
 import { isEmpty } from 'lodash';
 
 import Toast from 'react-native-easy-toast';
 import Loading from '../../components/Loading';
-import { addDocumentWithOutIdAsync, getCurrentUser } from '../../utils/actions';
+import { addDocumentWithOutIdAsync, getCurrentUser, getDocumentByIdAsync, updateDocumentByIdAsync } from '../../utils/actions';
 
 export default function AddReviewRestaurant({ navigation, route, }) {
 
@@ -39,12 +40,38 @@ export default function AddReviewRestaurant({ navigation, route, }) {
             comment: review,
             createAt: new Date(),
         };
+
         const responseAdd = await addDocumentWithOutIdAsync("reviews", data);
         if(!responseAdd.statusResponse){
             setShowLoading(false);
             toastRef.current.show(responseAdd.error.message, toastRefTimer);
+            return;
         }
+
+        const responseGetRestaurant = await getDocumentByIdAsync("restaurants", idRestaurant);
+        if(!responseGetRestaurant.statusResponse){
+            setShowLoading(false);
+            toastRef.current.show(responseGetRestaurant.error.message, toastRefTimer);
+            return;
+        }
+
+        const restaurant = responseGetRestaurant.document;
+        const ratingTotal = restaurant.ratingTotal + rating;
+        const quantityVoting = restaurant.quantityVoting + 1;
+        const ratingResult = ratingTotal / quantityVoting;
+        const restaurantUpdate = {
+            ratingTotal: ratingTotal,
+            quantityVoting: quantityVoting,
+            rating: ratingResult,
+        };
+        const responseUpdateRestaurante = await updateDocumentByIdAsync("restaurants", idRestaurant, restaurantUpdate)
         setShowLoading(false);
+        if(!responseUpdateRestaurante.statusResponse){
+            
+            toastRef.current.show(responseGetRestaurant.error.message, toastRefTimer);
+            return;    
+        }
+        navigation.goBack();
     }
 
     const validForm = () =>{
@@ -71,7 +98,7 @@ export default function AddReviewRestaurant({ navigation, route, }) {
     }
 
     return (
-        <View style={styles.viewBody}>
+        <KeyboardAwareScrollView style={styles.viewBody}>
             <View style={styles.viewRating}>
                 <AirbnbRating
                     
@@ -128,7 +155,7 @@ export default function AddReviewRestaurant({ navigation, route, }) {
             <Loading 
                 isVisible={showLoading} 
                 text="Processing please wait..."/>
-        </View>
+        </KeyboardAwareScrollView>
     )
 }
 
