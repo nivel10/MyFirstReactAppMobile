@@ -1,9 +1,10 @@
-import React, {useCallback, useState, useRef, } from 'react'
+import React, {useCallback, useState, useRef, isValidElement, } from 'react'
 import { Dimensions, ScrollView, StyleSheet, Text, View } from 'react-native'
 import { Icon, ListItem, Rating, } from 'react-native-elements';
 import { useFocusEffect, } from '@react-navigation/native'
 import { map } from 'lodash';
 
+import firebse from 'firebase/app';
 import Toast from 'react-native-easy-toast';
 
 import Loading from '../../components/Loading';
@@ -13,6 +14,7 @@ import MapRestaurant from '../../components/restaurants/MapRestaurant';
 
 import { getDocumentByIdAsync } from '../../utils/actions';
 import { formatPhone } from '../../utils/helpers';
+import firebase from 'firebase/app';
 
 const widthScreen = Dimensions.get("window").width;
 
@@ -23,6 +25,12 @@ export default function Restaurant({ navigation, route, }) {
     const toastRef = useRef();
     const [restaurant, setRestaurant] = useState(null);
     const [activeSlide, setActiveSlide] = useState(0);
+    const [isFavorite, setIsFavorite] = useState(false);
+    const [userLogged, setUserLogged] = useState(false);
+
+    firebase.auth().onAuthStateChanged((user) => {
+        user ? setUserLogged(true) : setUserLogged(false);
+    });
 
     useFocusEffect(
         useCallback(() => {
@@ -48,6 +56,22 @@ export default function Restaurant({ navigation, route, }) {
         )
     }
 
+    const addFavorite = () =>{
+        if(!userLogged){
+            toastRef.current.show("To add restaurant to favorite you must be logged in.", toastTimeShow);
+        } else {
+            console.log("Add favorite");
+        }
+    }
+
+    const removeFavorite = () =>{
+        if(!userLogged){
+            toastRef.current.show("dcd", toastTimeShow);
+        } else {
+            console.log("Remove favorite");
+        }
+    }
+
     return (
         <ScrollView style={styles.viewBody}>
             <CarouselImages 
@@ -57,6 +81,16 @@ export default function Restaurant({ navigation, route, }) {
                 activeSlide={activeSlide}
                 setActiveSlide={setActiveSlide}
             />
+             <View style={styles.viewFavorite}>
+                <Icon
+                    color={isFavorite ? "#f2936c" : "#7c7c82"}
+                    name={isFavorite ? "heart" : "heart-outline"}
+                    onPress={isFavorite ? removeFavorite : addFavorite}
+                    type="material-community"
+                    size={25}
+                    underlayColor="transparent"
+                />
+            </View>
             <RestaurantTitle 
                 name={restaurant.name} 
                 description={restaurant.description}
@@ -177,5 +211,15 @@ const styles = StyleSheet.create({
     containerListItem: {
         borderBottomColor: "#917464",
         borderBottomWidth: 0.4,
+    },
+
+    viewFavorite: {
+        position: "absolute",
+        top: 0,
+        right: 0,
+        backgroundColor: "#ffff",
+        borderBottomLeftRadius: 100,
+        padding: 5,
+        paddingLeft: 10,
     },
 })
