@@ -12,7 +12,7 @@ import CarouselImages from '../../components/restaurants/CarouselImages';
 import ListReviews from '../../components/restaurants/ListReviews';
 import MapRestaurant from '../../components/restaurants/MapRestaurant';
 
-import { addDocumentWithOutIdAsync, getCurrentUser, getDocumentByIdAsync, getIsFavoriteAsync } from '../../utils/actions';
+import { addDocumentWithOutIdAsync, getCurrentUser, getDocumentByIdAsync, getIsFavoriteAsync, removeIsFavoriteAsync } from '../../utils/actions';
 import { formatPhone } from '../../utils/helpers';
 import firebase from 'firebase/app';
 
@@ -91,11 +91,15 @@ export default function Restaurant({ navigation, route, }) {
         }
     }
 
-    const removeFavorite = () =>{
-        if(!userLogged){
-            toastRef.current.show("dcd", toastTimeShow);
+    const removeFavorite = async() =>{
+        setShowLoading(true);
+        const response = await removeIsFavoriteAsync(restaurant.id);
+        setShowLoading(false);
+        if(!response.statusResponse){
+            toastRef.current.show(response.error.message, toastTimeShow);
         } else {
-            console.log("Remove favorite");
+            setIsFavorite(false);
+            toastRef.current.show("Restaurant remove from favorites.", toastTimeShow);
         }
     }
 
