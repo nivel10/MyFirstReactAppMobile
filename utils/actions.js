@@ -316,3 +316,25 @@ export const getFavoritesAsync = async () => {
     }
     return result;
 }
+
+export const getTopRestaurantsAsync = async (limit) => {
+    const result = {statusResponse: true, result: null, error: null, };
+    try {
+        const restaurants = [];
+        const response = await db.collection('restaurants')
+        .orderBy("rating", "desc")
+        .limit(limit)
+        .get();
+
+        response.forEach((doc) =>{
+            const restaurant = doc.data();
+            restaurant.id = doc.id;
+            restaurants.push(restaurant);
+        });
+        result.result = restaurants;
+    } catch (ex) {
+        result.statusResponse = false;
+        result.error = ex;
+    }
+    return result;
+} 

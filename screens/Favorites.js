@@ -11,7 +11,7 @@ import Loading from '../components/Loading';
 
 export default function Favorites({ navigation, }) {
     const toastRef = useRef();
-    const [restaurants, setRestaurants] = useState([]);
+    const [restaurants, setRestaurants] = useState(null);
     const [userLogged, setuserLogged] = useState(isUserLogged());
     const [loading, setLoading] = useState(false);
     const [reloadData, setreloadData] = useState(false);
@@ -154,7 +154,7 @@ function Restaurant({restaurant, setLoading, toastRef, navigation, setreloadData
             <Image 
                 resizeMode="cover"
                 style={styles.image}
-                playholderContent={<ActivityIndicator color="#ffff"/>}
+                placeholderContent={<ActivityIndicator color="#ffff"/>}
                 source={{uri: images[0]}}
             />
             <View style={styles.info}>
