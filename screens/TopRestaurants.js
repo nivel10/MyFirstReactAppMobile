@@ -4,8 +4,9 @@ import { useFocusEffect  } from '@react-navigation/native'
 
 import { getTopRestaurantsAsync } from '../utils/actions';
 import Loading from '../components/Loading';
+import ListTopRestaurants from '../components/ranking/ListTopRestaurants';
 
-export default function TopRestaurants() {
+export default function TopRestaurants({ navigation }) {
     const [restaurants, setRestaurants] = useState(null);
     const [loading, setLoading] = useState(false);
 
@@ -25,11 +26,12 @@ export default function TopRestaurants() {
         }, [],)
     )
 
-    console.log(restaurants);
-
     return (
         <View>
-            <Text>Top Restaurants</Text>
+            <ListTopRestaurants 
+                restaurants={restaurants} 
+                navigation={navigation} 
+            />
             <Loading isVisible={loading} text="Please wait..." />
         </View>
     )
@@ -37,5 +39,5 @@ export default function TopRestaurants() {
 
 const styles = StyleSheet.create({
 
-    
+
 })

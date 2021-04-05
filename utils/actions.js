@@ -279,10 +279,10 @@ export const getFavoritesAsync = async () => {
         .where("idUser", "==", getCurrentUser().uid)
         .get();
 
-        response.forEach(async (doc) => {
-            const favorite = doc.data();
-            restaurantsId.push(favorite.idRestaurant);
-        });
+        // response.forEach(async (doc) => {
+        //     const favorite = doc.data();
+        //     restaurantsId.push(favorite.idRestaurant);
+        // });
 
         //#region Old code
         //await Promise.all(
@@ -298,16 +298,29 @@ export const getFavoritesAsync = async () => {
         //)
         //#endregion Old code
 
-        for (const restaurantId of restaurantsId){
-            const resultRestaurant = await getDocumentByIdAsync('restaurants', restaurantId);
-            if(resultRestaurant.statusResponse){
-                favorites.push(resultRestaurant.document);
-            }
-            else {
-                result.error = resultRestaurant.error;
-                return;
-            }
-        }
+        // for (const restaurantId of restaurantsId){
+        //     const resultRestaurant = await getDocumentByIdAsync('restaurants', restaurantId);
+        //     if(resultRestaurant.statusResponse){
+        //         favorites.push(resultRestaurant.document);
+        //     }
+        //     else {
+        //         result.error = resultRestaurant.error;
+        //         return;
+        //     }
+        // }
+
+        await Promise.all(
+            map(response.docs, async (doc) =>{
+                const favorite = doc.data();
+                const responseRestaurant = await getDocumentByIdAsync('restaurants', favorite.idRestaurant);
+                if(responseRestaurant){
+                    favorites.push(responseRestaurant.document);
+                } else {
+                    result.error = responseRestaurant.error;
+                    return;
+                }
+            })
+        )
 
         result.result = favorites;
     } catch (ex) {
