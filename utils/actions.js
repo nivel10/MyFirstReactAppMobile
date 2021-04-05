@@ -3,18 +3,21 @@ import * as firebase from 'firebase';
 import 'firebase/firestore';
 
 import { fileToBlobAsync } from '../utils/helpers'
+import { map } from 'lodash';
 
 const db = firebase.firestore(firebaseApp);
 
 export const isUserLogged = () =>{
-    let isLogged = false;
+    /*let isLogged = false;
 
     firebase.auth().onAuthStateChanged((user) =>{
         user !== null && (isLogged = true);
         //user !== null ? isLogged = true : isLogged = false;
         //console.log(`onAuthStateChanged: ${user}`);
     })
-    return isLogged;
+    return isLogged;*/
+
+    return (getCurrentUser() !== null);
 };
 
 export const getCurrentUser = () => {
@@ -262,6 +265,54 @@ export const removeIsFavoriteAsync = async(idRestaurant) =>{
     } catch (ex) {
         result.statusResponse = false;
         result.error = ex;
+    }
+    return result;
+}
+
+export const getFavoritesAsync = async () => {
+    const result = {statusResponse: true, error: null, result: null};
+    try {
+        let favorites = [];
+        let restaurantsId = [];
+
+        const response = await db.collection('favorites')
+        .where("idUser", "==", getCurrentUser().uid)
+        .get();
+
+        response.forEach(async (doc) => {
+            const favorite = doc.data();
+            restaurantsId.push(favorite.idRestaurant);
+        });
+
+        //#region Old code
+        //await Promise.all(
+            // map(restaurantsId, async(restaurantId) => {
+            //     const resultRestaurant = await getDocumentByIdAsync('restaurants', restaurantId);
+            //     if(resultRestaurant.statusResponse){
+            //         favorites.push(resultRestaurant.document);
+            //     }
+            //     else {
+            //         //console.log(resultRestaurant);
+            //     }
+            // })
+        //)
+        //#endregion Old code
+
+        for (const restaurantId of restaurantsId){
+            const resultRestaurant = await getDocumentByIdAsync('restaurants', restaurantId);
+            if(resultRestaurant.statusResponse){
+                favorites.push(resultRestaurant.document);
+            }
+            else {
+                result.error = resultRestaurant.error;
+                return;
+            }
+        }
+
+        result.result = favorites;
+    } catch (ex) {
+        result.statusResponse = false;
+        result.error = `${ex.message}`;
     }
     return result;
 }
