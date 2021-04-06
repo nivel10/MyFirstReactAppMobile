@@ -1,11 +1,13 @@
 import {firebaseApp} from './firebase';
 import * as firebase from 'firebase';
 import 'firebase/firestore';
+import { FireSQL } from 'firesql';
 
 import { fileToBlobAsync } from '../utils/helpers'
-import { map } from 'lodash';
+import { includes, map } from 'lodash';
 
 const db = firebase.firestore(firebaseApp);
+const fireSQL = new FireSQL(firebase.firestore(), {includeId: "id", });
 
 export const isUserLogged = () =>{
     /*let isLogged = false;
@@ -344,6 +346,18 @@ export const getTopRestaurantsAsync = async (limit) => {
             restaurant.id = doc.id;
             restaurants.push(restaurant);
         });
+        result.result = restaurants;
+    } catch (ex) {
+        result.statusResponse = false;
+        result.error = ex;
+    }
+    return result;
+} 
+
+export const searchRestaurantsAsync = async (criteria) => {
+    const result = {statusResponse: true, result: null, error: null, };
+    try {
+        const restaurants = await fireSQL.query(`SELECT * FROM restaurants WHERE name LIKE '${criteria}%'`);
         result.result = restaurants;
     } catch (ex) {
         result.statusResponse = false;
