@@ -8,6 +8,7 @@ import { useNavigation } from '@react-navigation/native';
 import { createUserAsync } from '../../utils/actions';
 import { validateEmail } from '../../utils/helpers';
 import Loading from '../Loading';
+import { getNotificationTokenAsyn } from '../../utils/notifications';
 
 export default function RegisterForm() {
 
@@ -33,14 +34,19 @@ export default function RegisterForm() {
 
         setShowLoading(true);
         const resul = await createUserAsync(formData.email, formData.password);
-        setShowLoading(false);
 
         if(!resul.statusResponse){
-            //console.log(`Error: ${resul.error}`);
             setErrorEmail(resul.error);
+            setShowLoading(false);
             return;
         }
-        //console.log("Ok");
+        let response = await getNotificationTokenAsyn();
+        console.log(response);
+        if(response.isSuccess){
+
+        }
+
+        setShowLoading(false);
         navigation.navigate("account");
     }
 
