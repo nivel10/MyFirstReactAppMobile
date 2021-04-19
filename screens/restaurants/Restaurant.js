@@ -179,23 +179,23 @@ function RestaurantInfo({ name, location, address, email, phone, currentUser, })
 
     const iconAction = (item, action) =>{
         let response = getResponse();
+        let body = null;
+        if(currentUser){
+            body = `Hello, i'm ${currentUser.displayName}, i'm interested in your services.`;
+        } else {
+            body = `Hello, i'm interested in your services.`;
+        }
         switch(action){
             case 'callNumber': 
                 response = callNumber(item.text);
             break;
 
             case 'sendEmail':
-                let body = '';
-                if(currentUser){
-                    body = `Hello, i'm ${currentUser.displayName}, i'm interested in your services.`;
-                } else {
-                    body = `Hello, i'm interested in your services.`;
-                }
                 response = sendEmail(item.text, 'Contact them', body);
             break;
 
             case 'sendWhatsApp':
-                sendWhatsApp(item.text, 'Hello');
+                sendWhatsApp(item.text, body);
             break;
         }
         if(!response.isSuccess){

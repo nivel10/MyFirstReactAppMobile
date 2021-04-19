@@ -36,7 +36,9 @@ export default function Search({ navigation }) {
         <View>
             <SearchBar
                 placeholder="Enter restaurante name"
-                onChangeText={(e) => setSearch(e)}
+                onChangeText={(e) => 
+                    (isEmpty(e) ? clearSearch() : setSearch(e))
+                }
                 onClear={() => clearSearch()}
                 onCancel={() => clearSearch()}
                 containerStyle={styles.searchBar}
