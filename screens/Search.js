@@ -8,16 +8,21 @@ import { searchRestaurantsAsync } from '../utils/actions';
 export default function Search({ navigation }) {
     const [search, setSearch] = useState("");
     const [restaurants, setRestaurants] = useState([]);
+    const [showLoading, setshowLoading] = useState(false);
 
     useEffect(() => {
         if(isEmpty(search)){
             return;
         }
         async function getData() {
+            setshowLoading(true)
             const result = await searchRestaurantsAsync(search);
             if(result.statusResponse){
                 setRestaurants(result.result);
+            } else {
+
             }
+            setshowLoading(false)
         }
         getData();
     }, [search]);
@@ -33,7 +38,9 @@ export default function Search({ navigation }) {
                 placeholder="Enter restaurante name"
                 onChangeText={(e) => setSearch(e)}
                 onClear={() => clearSearch()}
+                onCancel={() => clearSearch()}
                 containerStyle={styles.searchBar}
+                showLoading={showLoading}
                 value={search}
             />
             {

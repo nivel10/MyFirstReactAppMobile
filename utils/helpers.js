@@ -1,8 +1,8 @@
 import * as Permissions from 'expo-permissions';
 import * as ImagePicker from 'expo-image-picker';
 import * as Location from 'expo-location';
-import { Alert } from 'react-native'
-import { getCallingCode } from 'react-native-country-picker-modal';
+import { Alert, Linking, } from 'react-native'
+//import { getCallingCode } from 'react-native-country-picker-modal';
 
 export function validateEmail(email) {
     const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
@@ -94,4 +94,79 @@ export const reverseGeocodeAsync = async(geoLocation) =>
 
 export const formatPhone = (callingCode, phone) =>{
     return `+(${callingCode}) ${phone}`;
+}
+
+export const callNumber = (phoneNumber) => {
+    let response = getResponse()
+    try{
+        response = clearPhoneNumber(phoneNumber);
+        if(response.isSuccess){
+            Linking.openURL(`tel:${response.result}`);
+        }
+    } catch(ex){
+        response.isSuccess = false;
+        response.msgType = -1;
+        response.msgText = `${ex.code} - ${ex.message}`;
+    }
+    return response;
+}
+
+export const sendWhatsApp = (phoneNumber, text) => {
+    let response = getResponse();
+    try{
+        response = clearPhoneNumber(phoneNumber);
+        if(response.isSuccess){
+            const link = `https://wa.me/${response.result}?text=${text}`;
+            Linking.canOpenURL(link).then((suppoted) => {
+                if(!suppoted){
+                    Alert.alert("Please instali WhatsApp to send a direct message.");
+                    return;
+                }
+                return Linking.openURL(link);
+            })
+        }
+    } catch(ex){
+        response.isSuccess = false;
+        response.msgType = -1;
+        response.msgText = `${ex.code} - ${ex.message}`;
+    }
+    return response
+}
+
+export const sendEmail = (to, subject, body) => {
+    const response = getResponse();
+    try{
+        Linking.openURL(`mailto:${to}?subject=${subject}&body=${body}`);
+    } catch(ex){
+        response.isSuccess = false;
+        response.msgType = -1;
+        response.msgText = `${ex.code} - ${ex.message}`;
+    }
+    return response;
+}
+
+export const getResponse = () =>{
+    return {
+        isSuccess: true, 
+        isWarning: false, 
+        msgType: 0, 
+        msgText: 'Method is on', 
+        error: null, 
+    };
+}
+
+export const clearPhoneNumber = (phoneNumber) => {
+    const response = getResponse();
+    try{
+        phoneNumber = phoneNumber.replace('(', '');
+        phoneNumber = phoneNumber.replace(')', '');
+        phoneNumber = phoneNumber.replace('-', '');
+        phoneNumber = phoneNumber.replace(' ', '');
+        response.result = phoneNumber;    
+    } catch(ex){
+        response.isSuccess = false;
+        response.msgType = -1;
+        response.msgText = `${ex.code} - ${ex.message}`;
+    }
+    return response;
 }

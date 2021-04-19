@@ -2,7 +2,7 @@ import React, {useCallback, useState, useRef, isValidElement, useEffect, } from 
 import { Dimensions, ScrollView, StyleSheet, Text, View } from 'react-native'
 import { Icon, ListItem, Rating, } from 'react-native-elements';
 import { useFocusEffect, } from '@react-navigation/native'
-import { map } from 'lodash';
+import { isEmpty, map } from 'lodash';
 
 import firebse from 'firebase/app';
 import Toast from 'react-native-easy-toast';
@@ -13,8 +13,9 @@ import ListReviews from '../../components/restaurants/ListReviews';
 import MapRestaurant from '../../components/restaurants/MapRestaurant';
 
 import { addDocumentWithOutIdAsync, getCurrentUser, getDocumentByIdAsync, getIsFavoriteAsync, removeIsFavoriteAsync } from '../../utils/actions';
-import { formatPhone } from '../../utils/helpers';
+import { formatPhone, sendEmail, sendWhatsApp, getResponse, callNumber } from '../../utils/helpers';
 import firebase from 'firebase/app';
+import { Alert } from 'react-native';
 
 const widthScreen = Dimensions.get("window").width;
 
@@ -28,9 +29,11 @@ export default function Restaurant({ navigation, route, }) {
     const [isFavorite, setIsFavorite] = useState(false);
     const [userLogged, setUserLogged] = useState(false);
     const [showLoading, setShowLoading] = useState(false);
+    const [currentUser, setCurrentUser] = useState(null);
 
     firebase.auth().onAuthStateChanged((user) => {
         user ? setUserLogged(true) : setUserLogged(false);
+        setCurrentUser(user);
     });
 
     useFocusEffect(
@@ -133,6 +136,7 @@ export default function Restaurant({ navigation, route, }) {
                 address={restaurant.address}
                 email={restaurant.email}
                 phone={formatPhone(restaurant.callingCode, restaurant.phone)}
+                currentUser={currentUser}
             />
             <ListReviews 
                 navigation={navigation}
@@ -166,12 +170,39 @@ function RestaurantTitle({name, description, rating, }){
     );
 }
 
-function RestaurantInfo({ name, location, address, email, phone, }){
+function RestaurantInfo({ name, location, address, email, phone, currentUser, }){
     const listInfo = [
-        { text: address, iconName: "map-marker", },
-        { text: phone, iconName: "phone", },
-        { text: email, iconName: "email", },
+        { text: address, iconLeft: "map-marker", },
+        { text: phone, iconLeft: "phone", iconRight: "whatsapp", actionLeft: "callNumber", actionRight: "sendWhatsApp", },
+        { text: email, iconLeft: "email", iconRight: "email-send", actionLeft: "", actionRight: "sendEmail", },
     ];
+
+    const iconAction = (item, action) =>{
+        let response = getResponse();
+        switch(action){
+            case 'callNumber': 
+                response = callNumber(item.text);
+            break;
+
+            case 'sendEmail':
+                let body = '';
+                if(currentUser){
+                    body = `Hello, i'm ${currentUser.displayName}, i'm interested in your services.`;
+                } else {
+                    body = `Hello, i'm interested in your services.`;
+                }
+                response = sendEmail(item.text, 'Contact them', body);
+            break;
+
+            case 'sendWhatsApp':
+                sendWhatsApp(item.text, 'Hello');
+            break;
+        }
+        if(!response.isSuccess){
+            Alert.alert(response.msgType === 1 ? 'Warning' : 'Error', response.msgText);
+        }
+    }
+
     return (
         <View style={styles.viewRestaurantInfo}>
             <Text style={styles.restaurantInfoTitle}>Restaurant information:</Text>
@@ -187,12 +218,33 @@ function RestaurantInfo({ name, location, address, email, phone, }){
                     >
                         <Icon 
                             type="material-community"
-                            name={item.iconName}
+                            name={item.iconLeft}
                             color="#f2936c"
+                            onPress={
+                                (item.actionLeft && !isEmpty(item.actionLeft)) && (
+                                    () => {iconAction(item, item.actionLeft)}
+                                )
+                            }
                         />
                         <ListItem.Content>
                             <ListItem.Title style={{color: "#7c7c82"}}>{item.text}</ListItem.Title>
                         </ListItem.Content>
+                        {
+                            item.iconRight && (
+
+                                <Icon 
+                                    type="material-community"
+                                    name={item.iconRight}
+                                    color="#f2936c"
+                                    onPress={
+                                        (item.actionRight && !isEmpty(item.actionRight)) && (
+                                            () => {iconAction(item, item.actionRight)}
+                                        )
+                                    }
+                                />
+                            )
+                        }
+                        
                     </ListItem>
                 ))
             }
