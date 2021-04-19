@@ -154,7 +154,7 @@ function Restaurant({restaurant, setLoading, toastRef, navigation, setreloadData
             <Image 
                 resizeMode="cover"
                 style={styles.image}
-                placeholderContent={<ActivityIndicator color="#ffff"/>}
+                PlaceholderContent={<ActivityIndicator color="#ffff"/>}
                 source={{uri: images[0]}}
             />
             <View style={styles.info}>

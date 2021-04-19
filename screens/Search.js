@@ -1,11 +1,12 @@
 import React, { useState, useEffect, } from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, Text, View, FlatList, ActivityIndicator, } from 'react-native'
+import { SearchBar, ListItem, Icon, Image, } from 'react-native-elements';
 
-import { isEmpty } from 'lodash';
+import { isEmpty, size } from 'lodash';
 import { searchRestaurantsAsync } from '../utils/actions';
 
 export default function Search({ navigation }) {
-    const [search, setSearch] = useState("Fi");
+    const [search, setSearch] = useState("");
     const [restaurants, setRestaurants] = useState([]);
 
     useEffect(() => {
@@ -20,15 +21,87 @@ export default function Search({ navigation }) {
         }
         getData();
     }, [search]);
-    console.clear();
-    console.log(search);
-    console.log(restaurants);
+
+    const clearSearch = () =>{
+        setSearch("");
+        setRestaurants([]);
+    }
 
     return (
         <View>
-            <Text>Searh</Text>
+            <SearchBar
+                placeholder="Enter restaurante name"
+                onChangeText={(e) => setSearch(e)}
+                onClear={() => clearSearch()}
+                containerStyle={styles.searchBar}
+                value={search}
+            />
+            {
+                size(restaurants) > 0 ? (
+                    <FlatList
+                        data={restaurants}
+                        keyExtractor={(item, index) => index.toString()}
+                        renderItem={(restaurant) => 
+                            <Restaurant
+                                restaurant={restaurant}
+                                navigation={navigation}
+                            />
+                        }
+                    />
+                ) : (
+                    isEmpty(search) ? (
+                        <Text style={styles.notFound}>Enter the first letters of the restaurant.</Text>
+                    ) : (
+                        <Text style={styles.notFound}>There are no restaurants that match the search criteria.</Text>
+                    )
+                )
+            }
         </View>
     )
 }
 
-const styles = StyleSheet.create({})
+function Restaurant({ restaurant, navigation, }){
+    const { id, name, images, } = restaurant.item;
+
+    return (
+        <ListItem 
+            style={styles.menuItem}
+            onPress={() => navigation.navigate("restaurants", {
+                screen: "restaurant",
+                params: { id, name }
+            })}
+        >    
+            <Image
+                resizeMode="cover"
+                PlaceholderContent={<ActivityIndicator color="#ffff" />}
+                source={{uri: images[0]}}
+                style={styles.imageRestaurant}
+            />
+            <ListItem.Content>
+                <ListItem.Title>{name}</ListItem.Title>
+            </ListItem.Content>
+            <Icon
+                type="material-community"
+                name="chevron-right"
+            />
+        </ListItem>
+    );
+}
+
+const styles = StyleSheet.create({
+    searchBar: {
+        marginBottom: 20,
+        backgroundColor: "#ffff",
+    },
+    imageRestaurant: {
+        width: 90,
+        height: 90,
+    },
+    notFound: {
+        alignSelf: "center",
+        width: "90%",
+    },
+    menuItem: {
+        margin: 10,
+    },
+})
