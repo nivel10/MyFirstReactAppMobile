@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "myfirstreactappmobile",
+  "private_key_id": "f99c6317eed404ab78cc72ac3610173a5b33d0d8",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDBl/bpKtC2pGYX\nGSSdMBD26NaDhdXBzjmTiDFX3a0M9ZT2W6+/tI1AGSBCXQRYKPRkk18XlqWgozcX\nr0O0GJQa3kStWQVRTcJTS0Naw5JnZ+f0g/4S3Q31gOQUgRL6Ri8BoqNAEdQSE3WJ\nP+NR5ydWRjcu8AxYpX0EuzISzuqB8iiJVbZ+FDJb/ORkzLCUTyey09pM4boOWU2s\nz5HI48nE8FT4f3VMAYWRLTI0TzmvcWAfgWy6u/VaIcNaMBIm4iKII+j5b4yaDtxw\nX9VguazSTXz/wPMujLskqAV5k99RbT55C/x5s/LaIVPGfH9yKKRccTCJ+bejKXJZ\ndjnbWcDxAgMBAAECggEAEIMbgm1uSjhrzr+MbG3Q8fEPzuhc6uq3OtAB1BU/xocH\nKBt6Ojc2WbJq784gPzwVsE2+QsmiIePvSzFd7HVbjePJvCFc1JT1z1tFiO8nxHMh\nM9gIP+f5N1NBi5rWGWEKxFsbYoJtcgc/3gTZfj8MOg3DdNjxAfnyLQj3Gec/1Z/B\njFY/J61c+ISZhdBvyfmDL5tBOa/T21eVsIt2s+eGi8dIpffH+MTAG4gKjncKw1Zq\nLIQa6r0BRI1EU3Iy9a/UNazx5qg5qz6PN4qnaGmlNTqtKMi3JPrdat5xPJ2usXxF\nGP8LjL38KIyTcqkZ52IMMMirzgJfa0W6Iz0guzmF8wKBgQD7bQ35QSOKhJI1nhL8\ntQqLU0JlaFVCnM3Ek5XnmKZDLje1myvZLZ35YiMc5mutBSnGDcKsKNMbZk7Uoc8m\nn4xdcYqbG4EDGaEdOXSKW27Ubc2PkBL1rRBwiLIvsd9mKV1eTVFwzEhx5BLu4NYR\nDtSLb8aai1Bf47zIJVtsiTfBLwKBgQDFHZJrgDFYaUkz85X51O88sHzBmTeWMFEi\nfbh/QHMmL77uPyoiqWGq/hUvYMKx0+Dmi+t943Cxo/WTgzTl0xApmxVvQZa+aB9p\nhd1Ry680b5aGp0K0llxvt6LQlFTjM0yhOa7H/LOKP7P5kU3k6ZfxYOQsEI9m3KTo\ngT714ZbX3wKBgGTGRT+OmExA7smG3l1jwyIs8QPsWaAlcWRFM2RsjteGgtXLqDuY\nSSVX7HL8+FOVKjUz9r9Cbbshup8HbBwy/vPFOqUI1SEE+MrZ6Jg8JaQHjsjoGnFW\nOKyiXak4Ri6QjdfqbaYkezULEXulqqeTpiVtW9E93a1Rfq1KK+bI6QwJAoGAPFNN\nkVrdPzqRrbWZq6kQQpmcxL84dN16pzykr0UxOHmaTF3Gbm86NdOm9iX9z+CRTt15\nh8CIp8UPDkM0eDW9F46f47nGAaXqHyhZ0IOurjSMc89SqePujD4+NOmAhTwY8qqt\npAThiajvUqy2kx0uZDAMBLRYvtk+Gu4bL7MHsC8CgYEAoAlNpu/Vi7eK/PlOprTF\njhdOZ6dUJKwueiITxWXyHSxBsneyEr6tE8f3jr/G39NZT0+l0XwT6LrniOHrqV1C\nahrmkxCzaypVToFKLoOws67lnyrgHgk1Ox3DJhRmgu8UUy7XE0iF96elx1cZ9NNR\njRha2vOQ1AUohwQhjMcGAEQ=\n-----END PRIVATE KEY-----\n",
+  "client_email": "myfirstreactappmobile@appspot.gserviceaccount.com",
+  "client_id": "100774126923300957862",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/myfirstreactappmobile%40appspot.gserviceaccount.com"
+}

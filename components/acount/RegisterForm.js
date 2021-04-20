@@ -6,9 +6,9 @@ import { Button, Icon, Input } from 'react-native-elements';
 import { useNavigation } from '@react-navigation/native';
 
 import { addDocumentWithIdAsync, addDocumentWithOutIdAsync, createUserAsync, getCurrentUser } from '../../utils/actions';
-import { validateEmail } from '../../utils/helpers';
+import { getResponse, validateEmail } from '../../utils/helpers';
 import Loading from '../Loading';
-import { getNotificationTokenAsyn } from '../../utils/notifications';
+import { getNotificationTokenAsyn, getToken } from '../../utils/notifications';
 import { Alert } from 'react-native';
 
 export default function RegisterForm() {
@@ -29,37 +29,47 @@ export default function RegisterForm() {
     };
 
     const registerUser = async () => {
-        if(!validateData()){
-            return;
-        }
-
-        setShowLoading(true);
-        const resul = await createUserAsync(formData.email, formData.password);
-
-        if(!resul.statusResponse){
-            setErrorEmail(resul.error);
-            setShowLoading(false);
-            return;
-        }
-
-        // Get notification token
-        let response = await getNotificationTokenAsyn();
-        if(response.isSuccess && !response.isWarning){
-            //response = await addDocumentWithIdAsync('users', { userId: getCurrentUser().uid, token: response.resul, }, getCurrentUser().uid);
-            response = await addDocumentWithOutIdAsync('notificationsToken', { userId: getCurrentUser().uid, token: response.resul, });
-            if(!response.statusResponse){
-                setShowLoading(false);
-                Alert.alert('Error', response.msgText);
+        let response = getResponse();
+        try{
+            if(!validateData()){
                 return;
             }
-        } else {
-            setShowLoading(false);
-            Alert.alert(response.isWarning ? 'Warning' : 'Error', response.msgText);
-            return;
-        }
 
-        setShowLoading(false);
-        navigation.navigate("account");
+            setShowLoading(true);
+            const resul = await createUserAsync(formData.email, formData.password);
+
+            if(!resul.statusResponse){
+                setErrorEmail(resul.error);
+                setShowLoading(false);
+                return;
+            }
+
+            // Get notification token
+            response = await getNotificationTokenAsyn();
+            //response = await getToken();
+            if(response.isSuccess && !response.isWarning){
+                //response = await addDocumentWithIdAsync('users', { userId: getCurrentUser().uid, token: response.resul, }, getCurrentUser().uid);
+                response = await addDocumentWithOutIdAsync('notificationsToken', { idUser: getCurrentUser().uid, token: response.result, });
+                if(!response.statusResponse){
+                    setShowLoading(false);
+                    Alert.alert('Error', `${response.error.code} - ${response.error.message}`);
+                    return;
+                }
+            } else {
+                setShowLoading(false);
+                Alert.alert(response.isWarning ? 'Warning' : 'Error', response.msgText);
+                return;
+            }
+
+            setShowLoading(false);
+            navigation.navigate("account");
+        } catch(ex){
+            setShowLoading(false);
+            response.isSuccess = false;
+            response.msgType = -1;
+            response.msgText = `${ex.code} - ${ex.message}`;
+            Alert.alert('Error', response.msgText);
+        }
     }
 
     const validateData = () => {

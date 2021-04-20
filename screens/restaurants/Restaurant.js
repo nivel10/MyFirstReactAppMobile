@@ -2,7 +2,7 @@ import React, {useCallback, useState, useRef, isValidElement, useEffect, } from 
 import { Dimensions, ScrollView, StyleSheet, Text, View } from 'react-native'
 import { Icon, ListItem, Rating, } from 'react-native-elements';
 import { useFocusEffect, } from '@react-navigation/native'
-import { isEmpty, map } from 'lodash';
+import { isEmpty, isLength, map } from 'lodash';
 
 import firebse from 'firebase/app';
 import Toast from 'react-native-easy-toast';
@@ -12,10 +12,12 @@ import CarouselImages from '../../components/restaurants/CarouselImages';
 import ListReviews from '../../components/restaurants/ListReviews';
 import MapRestaurant from '../../components/restaurants/MapRestaurant';
 
-import { addDocumentWithOutIdAsync, getCurrentUser, getDocumentByIdAsync, getIsFavoriteAsync, removeIsFavoriteAsync } from '../../utils/actions';
+import { addDocumentWithOutIdAsync, getCurrentUser, getDocumentByIdAsync, getDocumentByConditionalAsync, getIsFavoriteAsync, removeIsFavoriteAsync } from '../../utils/actions';
 import { formatPhone, sendEmail, sendWhatsApp, getResponse, callNumber } from '../../utils/helpers';
 import firebase from 'firebase/app';
 import { Alert } from 'react-native';
+import { isBackgroundLocationAvailableAsync } from 'expo-location';
+import { sendPushNotificaionsAsync, setNotificationMessage } from '../../utils/notifications';
 
 const widthScreen = Dimensions.get("window").width;
 
@@ -137,6 +139,7 @@ export default function Restaurant({ navigation, route, }) {
                 email={restaurant.email}
                 phone={formatPhone(restaurant.callingCode, restaurant.phone)}
                 currentUser={currentUser}
+                setShowLoading={setShowLoading}
             />
             <ListReviews 
                 navigation={navigation}
@@ -170,14 +173,53 @@ function RestaurantTitle({name, description, rating, }){
     );
 }
 
-function RestaurantInfo({ name, location, address, email, phone, currentUser, }){
+function RestaurantInfo({ name, location, address, email, phone, currentUser, setShowLoading, }){
     const listInfo = [
-        { text: address, iconLeft: "map-marker", },
+        { text: address, iconLeft: "map-marker", iconRight: "message-text-outline", actionLeft: "", actionRight: "sendNotification",},
         { text: phone, iconLeft: "phone", iconRight: "whatsapp", actionLeft: "callNumber", actionRight: "sendWhatsApp", },
         { text: email, iconLeft: "email", iconRight: "email-send", actionLeft: "", actionRight: "sendEmail", },
     ];
 
-    const iconAction = (item, action) =>{
+    const localSendPushNotificaionsAsync = async() => {
+        let response = getResponse();
+        try{
+            if(getCurrentUser() === null || isEmpty(getCurrentUser())){
+                Alert.alert('Warning', 'You must log in to run this process.');
+            } else {
+                setShowLoading(true);
+                response = await getDocumentByConditionalAsync('notificationsToken', 'idUser', '=', getCurrentUser().uid);
+                if(response.isSuccess){
+                    const data = response.result;
+                    if(data.length > 0){
+                        const notificationToken = data[0].token;
+                        const messageNotification = setNotificationMessage(
+                            notificationToken,
+                            'Title test',
+                            'Message test',
+                            { data: 'Test data'}
+                        );
+                        response = await sendPushNotificaionsAsync(messageNotification);
+                        if(response.isSuccess){
+                            setShowLoading(false);
+                            Alert.alert('Information', 'Notification has been sent.');
+                        }
+                    } else {
+                        setShowLoading(false);
+                        Alert.alert('Warning', 'You do not have a defined token.');        
+                    }
+                }
+                setShowLoading(false);
+            }
+        } catch(ex){
+            setShowLoading(false);
+            response.isSuccess = false;
+            response.msgType = -1;
+            response.msgText = `${ex.code} - ${ex.message}`;
+        }
+        return response;
+    }
+
+    const iconAction = async (item, action) =>{
         let response = getResponse();
         let body = null;
         if(currentUser){
@@ -192,6 +234,10 @@ function RestaurantInfo({ name, location, address, email, phone, currentUser, })
 
             case 'sendEmail':
                 response = sendEmail(item.text, 'Contact them', body);
+            break;
+
+            case 'sendNotification':
+                response = await localSendPushNotificaionsAsync();
             break;
 
             case 'sendWhatsApp':

@@ -3,8 +3,9 @@ import * as firebase from 'firebase';
 import 'firebase/firestore';
 import { FireSQL } from 'firesql';
 
-import { fileToBlobAsync } from '../utils/helpers'
+import { fileToBlobAsync, getResponse } from '../utils/helpers'
 import { includes, map } from 'lodash';
+import { Alert } from 'react-native';
 
 const db = firebase.firestore(firebaseApp);
 const fireSQL = new FireSQL(firebase.firestore(), {includeId: "id", });
@@ -31,12 +32,10 @@ export const createUserAsync = async (email, password) =>{
     try {
         await firebase.auth().createUserWithEmailAndPassword(email, password)
         .catch(function (ex){
-            //console.log(`${ex.code} - ${ex.message}`);
             result.statusResponse = false;
             result.error = ex.message;
         });
     } catch (ex) {
-        //console.log(ex);
         result.statusResponse = false;
         result.error = ex;
     }
@@ -52,7 +51,6 @@ export const loginWithEmailAndPasswordAsync = async (email, password) => {
     try{
         await firebase.auth().signInWithEmailAndPassword(email, password)
         .catch(function (ex) {
-            ///console.log(`${ex.code} - ${ex.message}`);
             switch(ex.code){
                 case 'auth/user-not-found':
                     break;
@@ -375,4 +373,20 @@ export const searchRestaurantsAsync = async (criteria) => {
         result.error = ex;
     }
     return result;
+} 
+
+export const getDocumentByConditionalAsync = async (collection, field, conditional, value) => {
+    let response = getResponse();
+    try {
+        let query = `SELECT * FROM ${collection} `;
+        query += `WHERE ${field} ${conditional} '${value}'`;
+
+        const result = await fireSQL.query(query);
+        response.result = result;
+    } catch (ex) {
+        response.isSuccess = false;
+        response.msgType = -1;
+        response.msgText = `${ex.code} - ${ex.message}`;
+    }
+    return response;
 } 
