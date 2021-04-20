@@ -143,6 +143,17 @@ export const addDocumentWithOutIdAsync = async(collection, data) =>{
     return result;
 }
 
+export const addDocumentWithIdAsync = async(collection, data, doc) =>{
+    const result = {statusResponse: true, error: null, };
+    try {
+        await db.collection(collection).doc(doc).set(data);
+    } catch (ex) {
+        result.statusResponse = false;
+        result.error = ex;
+    }
+    return result;
+}
+
 export const updateDocumentByIdAsync = async(collection, id, data) =>{
     const result = {statusResponse: true, error: null, };
     try {

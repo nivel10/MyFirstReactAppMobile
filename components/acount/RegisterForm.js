@@ -5,10 +5,11 @@ import { Button, Icon, Input } from 'react-native-elements';
 
 import { useNavigation } from '@react-navigation/native';
 
-import { createUserAsync } from '../../utils/actions';
+import { addDocumentWithIdAsync, addDocumentWithOutIdAsync, createUserAsync, getCurrentUser } from '../../utils/actions';
 import { validateEmail } from '../../utils/helpers';
 import Loading from '../Loading';
 import { getNotificationTokenAsyn } from '../../utils/notifications';
+import { Alert } from 'react-native';
 
 export default function RegisterForm() {
 
@@ -40,10 +41,21 @@ export default function RegisterForm() {
             setShowLoading(false);
             return;
         }
-        let response = await getNotificationTokenAsyn();
-        console.log(response);
-        if(response.isSuccess){
 
+        // Get notification token
+        let response = await getNotificationTokenAsyn();
+        if(response.isSuccess && !response.isWarning){
+            //response = await addDocumentWithIdAsync('users', { userId: getCurrentUser().uid, token: response.resul, }, getCurrentUser().uid);
+            response = await addDocumentWithOutIdAsync('notificationsToken', { userId: getCurrentUser().uid, token: response.resul, });
+            if(!response.statusResponse){
+                setShowLoading(false);
+                Alert.alert('Error', response.msgText);
+                return;
+            }
+        } else {
+            setShowLoading(false);
+            Alert.alert(response.isWarning ? 'Warning' : 'Error', response.msgText);
+            return;
         }
 
         setShowLoading(false);
