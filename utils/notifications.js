@@ -57,15 +57,23 @@ export const getNotificationTokenAsyn = async() =>{
     return response;
 }
 
-Notifications.setNotificationHandler({
+/*Notifications.setNotificationHandler({
     handleNotification: async() => ({
         shouldShowAlert: true,
         shouldPlaySound: true,
         shouldSetBadge: true
     })
-});
+});*/
 
-export const startNotifications = (notificationListener, responseListener) => {
+Notifications.setNotificationHandler({
+    handleNotification: async () => ({
+        shouldShowAlert: true,
+        shouldPlaySound: true,
+        shouldSetBadge: true
+    })
+ })
+
+/*export const startNotifications = (notificationListener, responseListener) => {
     notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
         console.log(notification);
     })
@@ -78,9 +86,22 @@ export const startNotifications = (notificationListener, responseListener) => {
         Notifications.removeNotificationSubscription(notificationListener);
         Notifications.removeNotificationSubscription(responseListener);
     }
-}
+}*/
 
-export const sendPushNotificaionsAsync = async (message) => {
+export const startNotifications = (notificationListener, responseListener) => {
+    notificationListener.current = Notifications.addNotificationReceivedListener(notification => {
+        console.log(notification)
+    })   
+    responseListener.current = Notifications.addNotificationResponseReceivedListener(notification => {
+        console.log(notification)
+    })  
+    return () => {
+        Notifications.removeNotificationSubscription(notificationListener)
+        Notifications.removeNotificationSubscription(responseListener)
+    }
+ }
+
+/*export const sendPushNotificaionsAsync = async (message) => {
     let response = getResponse();
     try{
         const url = 'https://exp.host/--/api/v2/push/send';
@@ -102,9 +123,29 @@ export const sendPushNotificaionsAsync = async (message) => {
         response.msgText = `${ex.code} - ${ex.message}`;
     }
     return response;
+}*/
+
+export const sendPushNotificaionsAsync = async(message) => {
+    let response = getResponse();
+    try{
+        await fetch("https://exp.host/--/api/v2/push/send", {
+        method: "POST",
+        headers: {
+            Accept: "application/json",
+            "Accept-encoding": "gzip, deflate",
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(message),
+        }).then((result) => response.result = result.json())
+    } catch(ex){
+        response.isSuccess = false;
+        response.msgType = -1;
+        response.msgText = `${ex.code} - ${ex.message}`;
+    }
+    return response
 }
 
-export const setNotificationMessage = (token, title, body, data,) => {
+/*export const setNotificationMessage = (token, title, body, data,) => {
     return {
         to: token,
         sound: 'default',
@@ -112,6 +153,18 @@ export const setNotificationMessage = (token, title, body, data,) => {
         body: body,
         data: data,
     };
+}*/
+
+export const setNotificationMessage = (token, title, body, data) => {
+    const message = {
+        to: token,
+        sound: "default",
+        title: title,
+        body: body,
+        data: data
+    }
+  
+    return message
 }
 
 /*export const getToken = async() => {

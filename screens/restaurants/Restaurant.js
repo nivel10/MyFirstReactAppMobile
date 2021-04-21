@@ -1,8 +1,8 @@
 import React, {useCallback, useState, useRef, isValidElement, useEffect, } from 'react'
 import { Dimensions, ScrollView, StyleSheet, Text, View } from 'react-native'
-import { Icon, ListItem, Rating, } from 'react-native-elements';
+import { Button, Icon, Input, ListItem, Rating, } from 'react-native-elements';
 import { useFocusEffect, } from '@react-navigation/native'
-import { isEmpty, isLength, map } from 'lodash';
+import { isEmpty, map } from 'lodash';
 
 import firebse from 'firebase/app';
 import Toast from 'react-native-easy-toast';
@@ -11,12 +11,13 @@ import Loading from '../../components/Loading';
 import CarouselImages from '../../components/restaurants/CarouselImages';
 import ListReviews from '../../components/restaurants/ListReviews';
 import MapRestaurant from '../../components/restaurants/MapRestaurant';
+import ModalComponent from '../../components/Modal';
 
 import { addDocumentWithOutIdAsync, getCurrentUser, getDocumentByIdAsync, getDocumentByConditionalAsync, getIsFavoriteAsync, removeIsFavoriteAsync } from '../../utils/actions';
 import { formatPhone, sendEmail, sendWhatsApp, getResponse, callNumber } from '../../utils/helpers';
 import firebase from 'firebase/app';
 import { Alert } from 'react-native';
-import { isBackgroundLocationAvailableAsync } from 'expo-location';
+//import { isBackgroundLocationAvailableAsync } from 'expo-location';
 import { sendPushNotificaionsAsync, setNotificationMessage } from '../../utils/notifications';
 
 const widthScreen = Dimensions.get("window").width;
@@ -32,6 +33,7 @@ export default function Restaurant({ navigation, route, }) {
     const [userLogged, setUserLogged] = useState(false);
     const [showLoading, setShowLoading] = useState(false);
     const [currentUser, setCurrentUser] = useState(null);
+    const [showModalNotification, setShowModalNotification] = useState(false);
 
     firebase.auth().onAuthStateChanged((user) => {
         user ? setUserLogged(true) : setUserLogged(false);
@@ -140,11 +142,18 @@ export default function Restaurant({ navigation, route, }) {
                 phone={formatPhone(restaurant.callingCode, restaurant.phone)}
                 currentUser={currentUser}
                 setShowLoading={setShowLoading}
+                setShowModalNotification={setShowModalNotification}
             />
             <ListReviews 
                 navigation={navigation}
                 idRestaurant={restaurant.id}
                 name={restaurant.name}/>
+            <ModalNotification 
+                showModalNotification={showModalNotification}
+                setShowModalNotification={setShowModalNotification}
+                setShowLoading={setShowLoading}
+                restaurant={restaurant}
+                />
             <Toast
                 ref={toastRef} 
                 position="center"
@@ -161,33 +170,33 @@ function RestaurantTitle({name, description, rating, }){
     return (
         <View style={styles.viewRestaurantTitle}>
             <View style={styles.viewRestaurantContainer}>
-                <Text style={styles.restaunatName}>{name}</Text>
+                <Text style={styles.restaurantName}>{name}</Text>
                 <Rating 
                     imageSize={12}
                     readOnly={true}
                     startingValue={parseFloat(rating)}
                     style={styles.rating}/>
             </View>
-            <Text style={styles.restaunatDescription}>{description}</Text>
+            <Text style={styles.restaurantDescription}>{description}</Text>
         </View>
     );
 }
 
-function RestaurantInfo({ name, location, address, email, phone, currentUser, setShowLoading, }){
+function RestaurantInfo({ name, location, address, email, phone, currentUser, setShowLoading, setShowModalNotification, }){
     const listInfo = [
         { text: address, iconLeft: "map-marker", iconRight: "message-text-outline", actionLeft: "", actionRight: "sendNotification",},
         { text: phone, iconLeft: "phone", iconRight: "whatsapp", actionLeft: "callNumber", actionRight: "sendWhatsApp", },
         { text: email, iconLeft: "email", iconRight: "email-send", actionLeft: "", actionRight: "sendEmail", },
     ];
 
-    const localSendPushNotificaionsAsync = async() => {
+    /*const localSendPushNotificaionsAsync = async() => {
         let response = getResponse();
         try{
-            if(getCurrentUser() === null || isEmpty(getCurrentUser())){
+            if(currentUser === null || isEmpty(currentUser)){
                 Alert.alert('Warning', 'You must log in to run this process.');
             } else {
                 setShowLoading(true);
-                response = await getDocumentByConditionalAsync('notificationsToken', 'idUser', '=', getCurrentUser().uid);
+                response = await getDocumentByConditionalAsync('notificationsToken', 'idUser', '=', currentUser.uid);
                 if(response.isSuccess){
                     const data = response.result;
                     if(data.length > 0){
@@ -220,7 +229,7 @@ function RestaurantInfo({ name, location, address, email, phone, currentUser, se
             response.msgText = `${ex.code} - ${ex.message}`;
         }
         return response;
-    }
+    }*/
 
     const iconAction = async (item, action) =>{
         let response = getResponse();
@@ -240,7 +249,8 @@ function RestaurantInfo({ name, location, address, email, phone, currentUser, se
             break;
 
             case 'sendNotification':
-                response = await localSendPushNotificaionsAsync();
+                //response = await localSendPushNotificaionsAsync();
+                setShowModalNotification(true);
             break;
 
             case 'sendWhatsApp':
@@ -301,6 +311,90 @@ function RestaurantInfo({ name, location, address, email, phone, currentUser, se
     );
 }
 
+function ModalNotification({showModalNotification, setShowModalNotification, setShowLoading, restaurant}){
+    const [title, setTitle] = useState('');
+    const [errorTitle, setErrorTitle] = useState('');
+    const [message, setMessage] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
+    
+    const localSendPushNotificaionsAsync = async() => {
+        let response = getResponse();
+        try{
+            if(currentUser === null || isEmpty(currentUser)){
+                Alert.alert('Warning', 'You must log in to run this process.');
+            } else {
+                setShowLoading(true);
+                response = await getDocumentByConditionalAsync('notificationsToken', 'idUser', '=', currentUser.uid);
+                if(response.isSuccess){
+                    const data = response.result;
+                    if(data.length > 0){
+                        const notificationToken = data[0].token;
+                        const messageNotification = setNotificationMessage(
+                            notificationToken,
+                            'Title test',
+                            'Message test',
+                            { data: 'Test data'},
+                        );
+
+                        response = await sendPushNotificaionsAsync(messageNotification);
+                        setShowLoading(false);
+                        if(response.isSuccess){
+                            Alert.alert('Information', 'Notification has been sent.');
+                        } else {
+                            Alert.alert('Error', response.msgText);
+                        }
+                    } else {
+                        setShowLoading(false);
+                        Alert.alert('Warning', 'You do not have a defined token.');        
+                    }
+                }
+                setShowLoading(false);
+            }
+        } catch(ex){
+            setShowLoading(false);
+            response.isSuccess = false;
+            response.msgType = -1;
+            response.msgText = `${ex.code} - ${ex.message}`;
+        }
+        return response;
+    }
+
+    return(
+        <ModalComponent 
+            isVisible={showModalNotification} 
+            setVisible={setShowModalNotification}>
+                <View style={styles.modalContainer}>
+                    <Text style={styles.textModal}>
+                        Send a message to restaurant lovers:
+                    </Text>
+                    <Text style={styles.textNameRestaurant}>
+                        {restaurant.name}
+                    </Text>
+                    <Input 
+                        placeholder='Message title' 
+                        onChangeText={(e) => setTitle(e)}
+                        value={title}
+                        errorMessage={errorTitle}
+                    />
+                     <Input 
+                        placeholder='Message'
+                        multiline={true}
+                        inputStyle={styles.textArea}
+                        onChangeText={(e) => setMessage(e)}
+                        value={message}
+                        errorMessage={errorMessage}
+                    />
+                    <Button 
+                        title='Send'
+                        buttonStyle={styles.btnSend}
+                        containerStyle={styles.btnSendContainer}
+                        onPress={()=> console.log('Ok')}
+                    />
+                </View>
+        </ModalComponent>
+    );
+}
+
 const styles = StyleSheet.create({
     viewBody: {
         backgroundColor: "#ffff",
@@ -315,7 +409,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
     },
 
-    restaunatName: {
+    restaurantName: {
         fontWeight: "bold",
         color: "#3c3c3c",
     },
@@ -326,7 +420,7 @@ const styles = StyleSheet.create({
         right: 0,
     },
 
-    restaunatDescription: {
+    restaurantDescription: {
         marginTop: 10,
         color: "#7c7c82",
         textAlign: "justify",
@@ -356,5 +450,36 @@ const styles = StyleSheet.create({
         borderBottomLeftRadius: 100,
         padding: 5,
         paddingLeft: 10,
+    },
+
+    modalContainer: {
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+
+    textModal: {
+        //color: '#f2936c',
+        color: '#7c7c82',
+        fontSize: 14,
+        fontWeight: 'bold',
+    },
+
+    textNameRestaurant: {
+        color: '#f2936c',
+        fontWeight: 'bold',
+        fontSize: 16,
+    },
+
+    textArea: {
+        height: 50,
+        paddingHorizontal: 10,
+    },
+
+    btnSend: {
+        backgroundColor: '#f2936c',
+    },
+
+    btnSendContainer: {
+        width: '40%',
     },
 })
