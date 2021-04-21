@@ -196,12 +196,15 @@ function RestaurantInfo({ name, location, address, email, phone, currentUser, se
                             notificationToken,
                             'Title test',
                             'Message test',
-                            { data: 'Test data'}
+                            { data: 'Test data'},
                         );
+
                         response = await sendPushNotificaionsAsync(messageNotification);
+                        setShowLoading(false);
                         if(response.isSuccess){
-                            setShowLoading(false);
                             Alert.alert('Information', 'Notification has been sent.');
+                        } else {
+                            Alert.alert('Error', response.msgText);
                         }
                     } else {
                         setShowLoading(false);

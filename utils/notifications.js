@@ -83,14 +83,14 @@ export const startNotifications = (notificationListener, responseListener) => {
 export const sendPushNotificaionsAsync = async (message) => {
     let response = getResponse();
     try{
-        const url = 'https://exp.host/--/api/v2/push/send/';
+        const url = 'https://exp.host/--/api/v2/push/send';
         const options = {
             method: 'post',
             headers: {
-                Accept: 'aplicattion/json',
-                'Accept-encoding': 'gzip, deflate',
-                'Content-Type': 'application/json',
-            },
+                Accept: "application/json",
+                "Accept-encoding": "gzip, deflate",
+                "Content-Type": "application/json",
+              },
             body: JSON.stringify(message),
         };
         const result = await fetch(url, options);

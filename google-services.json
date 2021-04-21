@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "6390273939",
+    "firebase_url": "https://myfirstreactappmobile-default-rtdb.firebaseio.com",
+    "project_id": "myfirstreactappmobile",
+    "storage_bucket": "myfirstreactappmobile.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:6390273939:android:d3f8646287cc9b879ffa66",
+        "android_client_info": {
+          "package_name": "com.chejconsultor.myfirstreactappmobile"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "6390273939-3fh5dqf4akucqj1ku4aici4halmfi66v.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBnofJ-7TlvB9PXWCNUcawqQtNt7UO-bPQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "6390273939-3fh5dqf4akucqj1ku4aici4halmfi66v.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
