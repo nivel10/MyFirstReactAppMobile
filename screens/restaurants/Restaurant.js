@@ -153,6 +153,7 @@ export default function Restaurant({ navigation, route, }) {
                 setShowModalNotification={setShowModalNotification}
                 setShowLoading={setShowLoading}
                 restaurant={restaurant}
+                currentUser={currentUser}
                 />
             <Toast
                 ref={toastRef} 
@@ -311,44 +312,69 @@ function RestaurantInfo({ name, location, address, email, phone, currentUser, se
     );
 }
 
-function ModalNotification({showModalNotification, setShowModalNotification, setShowLoading, restaurant}){
+function ModalNotification({showModalNotification, setShowModalNotification, setShowLoading, restaurant, currentUser, }){
     const [title, setTitle] = useState('');
     const [errorTitle, setErrorTitle] = useState('');
     const [message, setMessage] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
     
+    const validateForm = () => {
+        let response = getResponse();
+        try{
+            if(isEmpty(title)){
+                response.isWarning = true;
+                //response.msgText = 'You must enter a title';
+                setErrorTitle('You must enter a title');
+            }
+            if(isEmpty(message)){
+                response.isWarning = true;
+                //response.msgText = 'You must enter a message';
+                setErrorMessage('You must enter a message');
+            }
+        } catch(ex){
+            response.isSuccess = false;
+            response.msgType = -1;
+            response.msgText = `${ex.code} - ${ex.message}`;
+        }
+        return response;
+    }
+
     const localSendPushNotificaionsAsync = async() => {
         let response = getResponse();
         try{
             if(currentUser === null || isEmpty(currentUser)){
                 Alert.alert('Warning', 'You must log in to run this process.');
             } else {
-                setShowLoading(true);
-                response = await getDocumentByConditionalAsync('notificationsToken', 'idUser', '=', currentUser.uid);
-                if(response.isSuccess){
-                    const data = response.result;
-                    if(data.length > 0){
-                        const notificationToken = data[0].token;
-                        const messageNotification = setNotificationMessage(
-                            notificationToken,
-                            'Title test',
-                            'Message test',
-                            { data: 'Test data'},
-                        );
 
-                        response = await sendPushNotificaionsAsync(messageNotification);
-                        setShowLoading(false);
-                        if(response.isSuccess){
-                            Alert.alert('Information', 'Notification has been sent.');
+                response = validateForm();
+                if(response.isSuccess && !response.isWarning){
+                    setShowLoading(true);
+                    response = await getDocumentByConditionalAsync('notificationsToken', 'idUser', '=', currentUser.uid);
+                    if(response.isSuccess){
+                        const data = response.result;
+                        if(data.length > 0){
+                            const notificationToken = data[0].token;
+                            const messageNotification = setNotificationMessage(
+                                notificationToken,
+                                'Title test',
+                                'Message test',
+                                { data: 'Test data'},
+                            );
+
+                            response = await sendPushNotificaionsAsync(messageNotification);
+                            setShowLoading(false);
+                            if(response.isSuccess){
+                                Alert.alert('Information', 'Notification has been sent.');
+                            } else {
+                                Alert.alert('Error', response.msgText);
+                            }
                         } else {
-                            Alert.alert('Error', response.msgText);
+                            setShowLoading(false);
+                            Alert.alert('Warning', 'You do not have a defined token.');        
                         }
-                    } else {
-                        setShowLoading(false);
-                        Alert.alert('Warning', 'You do not have a defined token.');        
                     }
+                    setShowLoading(false);
                 }
-                setShowLoading(false);
             }
         } catch(ex){
             setShowLoading(false);
@@ -356,7 +382,7 @@ function ModalNotification({showModalNotification, setShowModalNotification, set
             response.msgType = -1;
             response.msgText = `${ex.code} - ${ex.message}`;
         }
-        return response;
+        //return response;
     }
 
     return(
@@ -388,7 +414,7 @@ function ModalNotification({showModalNotification, setShowModalNotification, set
                         title='Send'
                         buttonStyle={styles.btnSend}
                         containerStyle={styles.btnSendContainer}
-                        onPress={()=> console.log('Ok')}
+                        onPress={()=> localSendPushNotificaionsAsync()}
                     />
                 </View>
         </ModalComponent>
