@@ -390,3 +390,65 @@ export const getDocumentByConditionalAsync = async (collection, field, condition
     }
     return response;
 } 
+
+export const getDocumentByConditionalsAsync = async (collection, conditionals, ordersBy, limit) =>{
+    const result =  {isSuccess: true, isWarning: false, msgType: 0, msgText: null, result: null, };
+    try{
+        let firebaseQuery = db.collection(collection);
+
+        // Conditionals
+        map(conditionals, (conditionl, index) => {
+            firebaseQuery = firebaseQuery.where(conditionl.field, conditionl.operator, conditionl.value);
+        });
+
+        // Order by
+        map(ordersBy, (orderBy, index) =>{
+            if(orderBy.field !== '' && orderBy.value !== ''){
+                firebaseQuery = firebaseQuery.orderBy(orderBy.field, orderBy.value);
+            } else {
+                firebaseQuery = firebaseQuery.orderBy(orderBy.field);
+            }
+        });
+
+        // Limits
+        if(limit > 0){
+            firebaseQuery = firebaseQuery.limit(limit);
+        }
+
+        const data = await firebaseQuery.get();
+        result.result = data.docs.map(doc => ({id: doc.id, ...doc.data()}));
+    } catch(ex){
+        result.isSuccess = false;
+        result.msgType = -1;
+        result.msgText = ex.message;
+    }
+    return result;
+}
+
+export const getUsersFavotiteAsync = async (restaurantId) => {
+    let response = getResponse();
+    try {
+        let users = [];
+        const result = await db.collection('favorites').where('idRestaurant', '==', restaurantId).get();
+
+        await Promise.all(
+            map(result.docs, async (doc) => {
+                const favorite = doc.data();
+
+                const resultUser = await getDocumentByConditionalAsync('notificationsToken', 'idUser', '=', favorite.idUser);
+
+                if(resultUser.isSuccess){
+                    if(resultUser.result.length > 0){
+                        users.push(resultUser.result[0]);
+                    }
+                }
+            })
+        );
+        response.result = users;
+    } catch (ex) {
+        response.isSuccess = false;
+        response.msgType = -1;
+        response.msgText = `${ex.code} - ${ex.message}`;
+    }
+    return response;
+} 

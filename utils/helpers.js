@@ -150,7 +150,7 @@ export const getResponse = () =>{
         isSuccess: true, 
         isWarning: false, 
         msgType: 0, 
-        msgText: 'Method is on', 
+        msgText: 'Method is ok.', 
         error: null, 
     };
 }
