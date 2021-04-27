@@ -19,6 +19,7 @@ export default function Login() {
             >
                 <LoginForm/>
                 <CreateAccount/>
+                <RecoverPassword/>
             </View>
 
             <Divider
@@ -43,6 +44,20 @@ function CreateAccount(props) {
         </Text>
     </Text> 
     )   
+}
+
+function RecoverPassword(){
+    const navigation = useNavigation();
+    return(
+        <Text 
+            onPress={() => navigation.navigate('recover-password')}
+            style={styles.register}>
+            Did you forget your password?{' '}
+            <Text style={styles.btnRegister}>
+                get it back
+            </Text>
+        </Text>
+    );
 }
 
 const styles = StyleSheet.create({

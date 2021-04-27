@@ -1,9 +1,12 @@
 import React, { useState } from 'react'
 import { size } from 'lodash';
-import { StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, Text, View, Platform, Alert, } from 'react-native'
 import { Button, Icon, Input } from 'react-native-elements'
 
 import { useNavigation } from '@react-navigation/native';
+
+import * as GoogleSignIn from 'expo-google-sign-in';
+import * as firebase from 'firebase';
 
 import { loginWithEmailAndPasswordAsync } from '../../utils/actions';
 import { validateEmail } from '../../utils/helpers';
@@ -45,6 +48,69 @@ export default function LoginForm() {
             isValid = false;
         }
         return isValid;
+    }
+
+    async function googleSignInAsync() {
+        try {
+            await GoogleSignIn.initAsync()
+            if (Platform.OS === "android") {
+                await GoogleSignIn.askForPlayServicesAsync();
+            }
+            const { type, user } = await GoogleSignIn.signInAsync();
+            if (type === "success") {
+                onSignIn(user)
+                setShowLoading(false)
+                return true
+            } else {
+                setShowLoading(false)
+                Alert.alert('Warning', JSON.stringify(result))
+                return { cancelled: true }
+            }
+        } catch (error) {
+            setShowLoading(false)
+            Alert.alert('Error', error.message)
+            return { error: true }
+        }
+    }
+
+    function onSignIn(googleUser) {
+        const unsubscribe = firebase
+            .auth()
+            .onAuthStateChanged(function (firebaseUser) {
+                unsubscribe()
+                if (!isUserEqual(googleUser, firebaseUser)) {
+                    const credential = firebase.auth.GoogleAuthProvider.credential(
+                        googleUser.auth.idToken,
+                        googleUser.auth.accessToken
+                    )
+                    setShowLoading(true);
+                    firebase
+                        .auth()
+                        .signInWithCredential(credential)
+                        .then(() => {
+                            setShowLoading(false)
+                        })
+                        .catch(function (error) {
+                            setShowLoading(false)
+                            Alert.alert(error.message)
+                        })
+                } else {
+                    Alert.alert('Warning', 'User is logged in.');
+                }
+            });
+    }
+
+    function isUserEqual(googleUser, firebaseUser) {
+        if (firebaseUser) {
+            let providerData = firebaseUser.providerData
+            for (let i = 0; i < providerData.length; i++) {
+                if (providerData[i].providerId === firebase.auth.GoogleAuthProvider.PROVIDER_ID &&
+                    providerData[i].uid === googleUser.getBasicProfile().getId()) {
+                    return true
+                }
+            }
+        }
+        return false
     }
 
     const loginUserLocalAsync = async () => {
@@ -103,6 +169,21 @@ export default function LoginForm() {
                 buttonStyle={styles.btnLogin}
                 onPress={() => loginUserLocalAsync()}
             />
+            <Button
+                icon={
+                    <Icon
+                        name="google"
+                        type="material-community"
+                        marginRight={10}
+                        size={20}
+                        color="#ffff"
+                    />
+                }
+                title="Login with Google"
+                containerStyle={styles.btnLoginContainer}
+                buttonStyle={styles.btnLoginGoogle}
+                onPress={() => googleSignInAsync()}
+            />
 
             <Loading isVisible={showLoading} text="Starting session please wait..." />
 
@@ -133,7 +214,13 @@ const styles = StyleSheet.create({
 
     btnLoginContainer: {
         alignSelf: "center",
-        width: "40%",
+        width: "55%",
+    },
+
+    btnLoginGoogle:{
+        backgroundColor: "#ea4335",
+        borderRadius: 5,
+        marginTop: 5,
     },
 
 })

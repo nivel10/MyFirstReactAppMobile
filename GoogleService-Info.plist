@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>6390273939-net4s6el5l0bgtf0njhgolaiai2hte4t.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.6390273939-net4s6el5l0bgtf0njhgolaiai2hte4t</string>
+	<key>API_KEY</key>
+	<string>AIzaSyDbh3EjLbhgOWk9LTVLj0fPEVQ4AebjGaI</string>
+	<key>GCM_SENDER_ID</key>
+	<string>6390273939</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.chejconsultor.myfirstreactappmobile</string>
+	<key>PROJECT_ID</key>
+	<string>myfirstreactappmobile</string>
+	<key>STORAGE_BUCKET</key>
+	<string>myfirstreactappmobile.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:6390273939:ios:9e4d4b311072fc489ffa66</string>
+	<key>DATABASE_URL</key>
+	<string>https://myfirstreactappmobile-default-rtdb.firebaseio.com</string>
+</dict>
+</plist>

@@ -13,16 +13,18 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "bundleIdentifier": "com.chejconsultor.myfirstreactappmobile",
+      "config": {
+        "googleSignIn": {
+          "reservedClientId": "com.googleusercontent.apps.6390273939-net4s6el5l0bgtf0njhgolaiai2hte4t"
+        }
+      },
+      "googleServicesFile": "./GoogleService-Info.plist",
       "supportsTablet": true
     },
     "android": {
-      "googleServicesFile": "./google-services.json",
-      "package": "com.chejconsultor.myfirstreactappmobile",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
@@ -32,6 +34,8 @@
           "apiKey": "AIzaSyCdWNmm_okGUjlf_QCHdzqvnsabekq4bu4"
         }
       },
+      "googleServicesFile": "./google-services.json",
+      "package": "com.chejconsultor.myfirstreactappmobile",
       "permissions": [
         "CAMERA_ROLL",
         "READ_EXTERNAL_STORAGE",

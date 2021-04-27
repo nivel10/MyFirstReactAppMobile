@@ -15,14 +15,6 @@
       },
       "oauth_client": [
         {
-          "client_id": "6390273939-sm9vk7c81mgmud99j9agldbg39cl09tp.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.chejconsultor.myfirstreactappmobile",
-            "certificate_hash": "d3bad04dbd4998330eebf95c813693457da93507"
-          }
-        },
-        {
           "client_id": "6390273939-3fh5dqf4akucqj1ku4aici4halmfi66v.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -38,13 +30,6 @@
             {
               "client_id": "6390273939-3fh5dqf4akucqj1ku4aici4halmfi66v.apps.googleusercontent.com",
               "client_type": 3
-            },
-            {
-              "client_id": "6390273939-net4s6el5l0bgtf0njhgolaiai2hte4t.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.chejconsultor.myfirstreactappmobile"
-              }
             }
           ]
         }

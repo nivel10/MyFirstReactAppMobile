@@ -4,6 +4,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import Account from '../screens/accounts/Account';
 import Login from '../screens/accounts/Login';
 import Register from '../screens/accounts/Register';
+import RecoverPassword from '../screens/accounts/RecoverPassword';
 
 const Stack = createStackNavigator();
 
@@ -25,6 +26,11 @@ export default function AccountStack() {
                 name="register"
                 component={Register}
                 options={{title: "Register user",}}/>
+
+            <Stack.Screen
+                name="recover-password"
+                component={RecoverPassword}
+                options={{title: "Recover password",}}/>
 
         </Stack.Navigator>
     );
