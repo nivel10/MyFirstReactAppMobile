@@ -452,3 +452,25 @@ export const getUsersFavotiteAsync = async (restaurantId) => {
     }
     return response;
 } 
+
+export const sendEmailResetPassword = async(email) => {
+    let response = getResponse();
+  try{
+      //const result = await firebase.auth().sendPasswordResetEmail(email);
+      await firebase.auth().sendPasswordResetEmail(email);
+  }  catch(ex) {
+      switch(ex.code){
+        case 'auth/user-not-found':
+            response.msgType = 1;
+            response.isWarning = true;
+            response.msgText = `This email is not associated with any user`;
+            break;
+        default:
+            response.msgType = -1;
+            response.isSuccess = false;
+            response.msgText = `${ex.code} - ${ex.message}`;
+            break;
+      }
+  }
+  return response;
+} 

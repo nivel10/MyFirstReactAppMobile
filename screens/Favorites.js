@@ -18,6 +18,9 @@ export default function Favorites({ navigation, }) {
 
     useFocusEffect(
         useCallback(() => {
+            
+            setuserLogged(isUserLogged());
+
             if(userLogged){
                 async function getData(){
                     setLoading(true);

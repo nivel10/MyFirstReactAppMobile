@@ -8,6 +8,7 @@ import { Button, Icon, Input } from 'react-native-elements';
 
 import Loading from '../../components/Loading';
 import { getResponse, validateEmail } from '../../utils/helpers';
+import { sendEmailResetPassword } from '../../utils/actions';
 
 export default function RecoverPassword({ navigation, }) {
     const [email, setEmail] = useState('');
@@ -38,11 +39,16 @@ export default function RecoverPassword({ navigation, }) {
     const localRecoveryPassword = async() => {
         let response = getResponse();
         try{
-            console.log(email);
-
             if(!formValidateData()){
                 response.isWarning = true
+            } else {
+                setShowLoding(true);
+                const result = await sendEmailResetPassword(email);
+                setShowLoding(false)
+                response = result;
             }
+
+            console.log(response);
 
         } catch(ex){
             setShowLoding(false);
@@ -50,10 +56,12 @@ export default function RecoverPassword({ navigation, }) {
             response.msgType = -1;
             response.msgText = `${ex.code} - ${ex.message}`;
         }
-        if(!response.isSuccess){
+        if(!response.isSuccess || response.isWarning){
             Alert.alert(response.msgType === -1 ? 'Error' : 'Warning', response.msgText);
+            return;
         } else if(!response.isWarning) {
-            Alert.alert('Information', 'All ok mate....');
+            Alert.alert('Information', 'An email has been sent to you with the instructions to change your password');
+            navigation.navigate('account', { screen: 'login'});
         }
     }
 
@@ -84,7 +92,7 @@ export default function RecoverPassword({ navigation, }) {
                     buttonStyle={styles.btnReover}
                     contaninerStyle={styles.btnContainer}
                     title='Recover password'
-                    onPress={() => localRecoveryPassword()}
+                    onPress={localRecoveryPassword}
                 />
 
                 <Loading isVisible={showLoding} text='Recovering password'/>
